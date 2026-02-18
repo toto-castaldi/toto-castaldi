@@ -7,3 +7,4 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 {{ $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{ partial "seo.html" . }}

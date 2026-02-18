@@ -1,11 +1,11 @@
 [it]
-  languageCode = 'it'
+  languageCode = 'it-IT'
   languageName = 'Italiano'
   title = 'Antonio Toto Castaldi'
   weight = 1
 
 [en]
-  languageCode = 'en'
+  languageCode = 'en-US'
   languageName = 'English'
   title = 'Antonio Toto Castaldi'
   weight = 2

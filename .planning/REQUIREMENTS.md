@@ -15,18 +15,18 @@
 
 ### Content
 
-- [ ] **CONT-01**: Home page with project cards showing name, short description, and link for each project
+- [x] **CONT-01**: Home page with project cards showing name, short description, and link for each project
 - [x] **CONT-02**: Three projects displayed: Docora (docora.toto-castaldi.com), Lumio (lumio.toto-castaldi.com), Helix (helix.toto-castaldi.com)
 - [x] **CONT-03**: Project data stored in `data/projects.toml` with per-language fields
 - [x] **CONT-04**: Proper `<title>` and meta description per language
 - [x] **CONT-05**: i18n string files for UI labels in Italian and English
-- [ ] **CONT-06**: Favicon (SVG with dark mode support)
+- [x] **CONT-06**: Favicon (SVG with dark mode support)
 
 ### UI
 
-- [ ] **UI-01**: Text-based language switcher (IT/EN) in header
-- [ ] **UI-02**: Responsive layout that stacks project cards vertically on mobile
-- [ ] **UI-03**: Semantic HTML with proper heading hierarchy and `lang` attribute
+- [x] **UI-01**: Text-based language switcher (IT/EN) in header
+- [x] **UI-02**: Responsive layout that stacks project cards vertically on mobile
+- [x] **UI-03**: Semantic HTML with proper heading hierarchy and `lang` attribute
 - [x] **UI-04**: Zero JavaScript — pure HTML + CSS
 - [x] **UI-05**: Page load under 1 second
 
@@ -81,15 +81,15 @@
 | INFR-03 | Phase 1 | Complete |
 | INFR-04 | Phase 1 | Complete |
 | INFR-05 | Phase 1 | Complete |
-| CONT-01 | Phase 2 | Pending |
+| CONT-01 | Phase 2 | Complete |
 | CONT-02 | Phase 2 | Complete |
 | CONT-03 | Phase 2 | Complete |
 | CONT-04 | Phase 2 | Complete |
 | CONT-05 | Phase 2 | Complete |
-| CONT-06 | Phase 2 | Pending |
-| UI-01 | Phase 2 | Pending |
-| UI-02 | Phase 2 | Pending |
-| UI-03 | Phase 2 | Pending |
+| CONT-06 | Phase 2 | Complete |
+| UI-01 | Phase 2 | Complete |
+| UI-02 | Phase 2 | Complete |
+| UI-03 | Phase 2 | Complete |
 | UI-04 | Phase 2 | Complete |
 | UI-05 | Phase 2 | Complete |
 | DSGN-01 | Phase 2 | Complete |

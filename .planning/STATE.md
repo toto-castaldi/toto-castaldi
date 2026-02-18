@@ -5,29 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** Phase 2 in progress. Plan 01 complete, Plan 02 next.
+**Current focus:** Phase 2 complete. Ready for Phase 3.
 
 ## Current Position
 
-Phase: 2 of 3 (Bilingual Site with Design)
-Plan: 1 of 2 in current phase
-Status: In Progress
-Last activity: 2026-02-18 -- Completed 02-01-PLAN.md
+Phase: 3 of 3 (SEO and Production Polish)
+Plan: 0 of 0 in current phase
+Status: Ready
+Last activity: 2026-02-18 -- Completed 02-02-PLAN.md
 
-Progress: [######....] 50%
+Progress: [########..] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 7min
-- Total execution time: 0.35 hours
+- Total plans completed: 4
+- Average duration: 6min
+- Total execution time: 0.37 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 2 | 19min | 10min |
+| 2 | 2 | 3min | 2min |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -37,6 +38,7 @@ Progress: [######....] 50%
 | Phase 01 P01 | 2min | 2 tasks | 13 files |
 | Phase 01 P02 | 17min | 3 tasks | 1 files |
 | Phase 02 P01 | 2min | 2 tasks | 6 files |
+| Phase 02 P02 | 1min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -56,6 +58,9 @@ Recent decisions affecting current work:
 - [Phase 02]: Single-column centered layout (680px max-width) with vertically stacked cards
 - [Phase 02]: Bordered cards with rounded corners, whole-card clickable via CSS ::after overlay
 - [Phase 02]: WCAG AA verified color pairs for both light and dark modes
+- [Phase 02]: Language switcher shows only alternate language (not current) since with two languages showing both is redundant
+- [Phase 02]: TC monogram SVG favicon with embedded prefers-color-scheme for zero-JS dark mode
+- [Phase 02]: Decorative logo images use alt='' since project name appears in adjacent h2 heading
 
 ### Pending Todos
 
@@ -70,5 +75,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 02-01-PLAN.md
-Resume file: .planning/phases/02-bilingual-site-with-design/02-01-SUMMARY.md
+Stopped at: Completed 02-02-PLAN.md
+Resume file: .planning/phases/02-bilingual-site-with-design/02-02-SUMMARY.md

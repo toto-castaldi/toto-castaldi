@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** Phase 2 fully complete (including gap closure). Ready for Phase 3.
+**Current focus:** All phases complete. Site is production-ready with SEO polish.
 
 ## Current Position
 
 Phase: 3 of 3 (SEO and Production Polish)
-Plan: 0 of 0 in current phase
-Status: Ready
-Last activity: 2026-02-18 -- Completed 02-03-PLAN.md (gap closure: dark mode toggle)
+Plan: 1 of 1 in current phase
+Status: Complete
+Last activity: 2026-02-18 -- Completed 03-01-PLAN.md (hreflang, canonical, Open Graph)
 
-Progress: [#########.] 90%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 5min
-- Total execution time: 0.40 hours
+- Total plans completed: 6
+- Average duration: 4min
+- Total execution time: 0.43 hours
 
 **By Phase:**
 
@@ -29,6 +29,7 @@ Progress: [#########.] 90%
 |-------|-------|-------|----------|
 | 1 | 2 | 19min | 10min |
 | 2 | 3 | 5min | 2min |
+| 3 | 1 | 2min | 2min |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -40,6 +41,7 @@ Progress: [#########.] 90%
 | Phase 02 P01 | 2min | 2 tasks | 6 files |
 | Phase 02 P02 | 1min | 2 tasks | 5 files |
 | Phase 02 P03 | 2min | 2 tasks | 4 files |
+| Phase 03 P01 | 2min | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -65,6 +67,9 @@ Recent decisions affecting current work:
 - [Phase 02]: CSS-only checkbox :checked + sibling selector for dark mode toggle, no :has() for broader browser support
 - [Phase 02]: page-wrapper with min-height: 100vh covers full viewport so toggle background change is seamless
 - [Phase 02]: Layout centering moved from body to .page-wrapper to allow toggle-driven background on wrapper
+- [Phase 03]: Used .AllTranslations (not .Translations) for hreflang to include self-reference as required by Google
+- [Phase 03]: Territory-qualified language codes (it-IT, en-US) in languages.toml for OG locale compliance
+- [Phase 03]: x-default hreflang points to site root, letting Hugo handle default language redirect
 
 ### Pending Todos
 
@@ -79,5 +84,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 02-03-PLAN.md
-Resume file: .planning/phases/02-bilingual-site-with-design/02-03-SUMMARY.md
+Stopped at: Completed 03-01-PLAN.md -- All phases complete
+Resume file: .planning/phases/03-seo-and-production-polish/03-01-SUMMARY.md

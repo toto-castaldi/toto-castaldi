@@ -39,9 +39,9 @@
 
 ### SEO
 
-- [ ] **SEO-01**: hreflang tags with reciprocal linking and x-default
-- [ ] **SEO-02**: Open Graph meta tags (og:title, og:description, og:url, og:locale)
-- [ ] **SEO-03**: Canonical URLs per language version
+- [x] **SEO-01**: hreflang tags with reciprocal linking and x-default
+- [x] **SEO-02**: Open Graph meta tags (og:title, og:description, og:url, og:locale)
+- [x] **SEO-03**: Canonical URLs per language version
 
 ## v2 Requirements
 
@@ -96,9 +96,9 @@
 | DSGN-02 | Phase 2 | Complete |
 | DSGN-03 | Phase 2 | Complete |
 | DSGN-04 | Phase 2 | Complete |
-| SEO-01 | Phase 3 | Pending |
-| SEO-02 | Phase 3 | Pending |
-| SEO-03 | Phase 3 | Pending |
+| SEO-01 | Phase 3 | Complete |
+| SEO-02 | Phase 3 | Complete |
+| SEO-03 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 23 total

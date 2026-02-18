@@ -1,2 +1,11 @@
 [siteTitle]
 other = "Antonio Toto Castaldi"
+
+[tagline]
+other = "Software projects by Toto Castaldi"
+
+[languageSwitch]
+other = "Language"
+
+[viewProject]
+other = "Visit project"

@@ -1,0 +1,23 @@
+[[project]]
+name = "Docora"
+url = "https://docora.toto-castaldi.com"
+logo = "https://docora.toto-castaldi.com/images/logo.svg"
+[project.description]
+it = "Generazione intelligente di documenti e template personalizzati"
+en = "Intelligent document generation and custom templates"
+
+[[project]]
+name = "Lumio"
+url = "https://lumio.toto-castaldi.com"
+logo = "https://lumio.toto-castaldi.com/logo.svg"
+[project.description]
+it = "Strumenti per la visualizzazione e l'analisi dei dati"
+en = "Data visualization and analysis tools"
+
+[[project]]
+name = "Helix"
+url = "https://helix.toto-castaldi.com"
+logo = "https://helix.toto-castaldi.com/logo.svg"
+[project.description]
+it = "Piattaforma per l'automazione e l'integrazione di servizi"
+en = "Service automation and integration platform"

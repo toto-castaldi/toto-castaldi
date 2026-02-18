@@ -1,5 +1,4 @@
 ---
 title: "Antonio Toto Castaldi"
+description: "Progetti software di Toto Castaldi: Docora, Lumio e Helix"
 ---
-
-Sito in costruzione. I progetti saranno disponibili a breve.

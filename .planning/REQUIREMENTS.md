@@ -8,7 +8,7 @@
 ### Infrastructure
 
 - [x] **INFR-01**: Site generated with Hugo and deployed to GitHub Pages via GitHub Actions
-- [ ] **INFR-02**: Custom domain toto-castaldi.com and www.toto-castaldi.com with HTTPS
+- [x] **INFR-02**: Custom domain toto-castaldi.com and www.toto-castaldi.com with HTTPS
 - [x] **INFR-03**: CNAME file in `static/` for custom domain persistence across deploys
 - [x] **INFR-04**: Hugo multilingual configuration with Italian and English (filename-based i18n)
 - [x] **INFR-05**: `defaultContentLanguageInSubdir` set correctly as Day 0 decision
@@ -77,7 +77,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INFR-01 | Phase 1 | Complete |
-| INFR-02 | Phase 1 | Pending |
+| INFR-02 | Phase 1 | Complete |
 | INFR-03 | Phase 1 | Complete |
 | INFR-04 | Phase 1 | Complete |
 | INFR-05 | Phase 1 | Complete |

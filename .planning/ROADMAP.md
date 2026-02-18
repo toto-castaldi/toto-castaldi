@@ -12,7 +12,7 @@ A minimal multilingual landing page showcasing three software projects (Docora, 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation and Deploy Pipeline** - Hugo project, multilingual config, GitHub Actions, custom domain with HTTPS
+- [x] **Phase 1: Foundation and Deploy Pipeline** - Hugo project, multilingual config, GitHub Actions, custom domain with HTTPS
 - [ ] **Phase 2: Bilingual Site with Design** - Project cards, language switcher, responsive layout, typography, dark mode, favicon
 - [ ] **Phase 3: SEO and Production Polish** - hreflang tags, Open Graph, canonical URLs, final verification
 
@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md -- Hugo project scaffold, bilingual config, templates, GitHub Actions workflow, CNAME, 404 page
-- [ ] 01-02-PLAN.md -- GitHub Pages configuration, custom domain DNS, HTTPS verification
+- [x] 01-02-PLAN.md -- GitHub Pages configuration, custom domain DNS, HTTPS verification
 
 ### Phase 2: Bilingual Site with Design
 **Goal**: Visitors see three project cards (Docora, Lumio, Helix) with names, descriptions, and links in their chosen language, on a clean responsive page with language switching
@@ -68,6 +68,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and Deploy Pipeline | 1/2 | In Progress | - |
+| 1. Foundation and Deploy Pipeline | 2/2 | Complete | 2026-02-18 |
 | 2. Bilingual Site with Design | 0/0 | Not started | - |
 | 3. SEO and Production Polish | 0/0 | Not started | - |

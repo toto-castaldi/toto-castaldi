@@ -27,10 +27,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Visiting https://www.toto-castaldi.com redirects to or serves the same site
   3. The site has distinct `/it/` and `/en/` URL paths that each render a page in the correct language
   4. Pushing to main branch triggers GitHub Actions and deploys automatically without losing the custom domain
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md -- Hugo project scaffold, bilingual config, templates, GitHub Actions workflow, CNAME, 404 page
+- [ ] 01-02-PLAN.md -- GitHub Pages configuration, custom domain DNS, HTTPS verification
 
 ### Phase 2: Bilingual Site with Design
 **Goal**: Visitors see three project cards (Docora, Lumio, Helix) with names, descriptions, and links in their chosen language, on a clean responsive page with language switching

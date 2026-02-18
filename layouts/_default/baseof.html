@@ -4,13 +4,20 @@
   {{ partial "head.html" . }}
 </head>
 <body>
-  <header class="site-header">
-    <nav class="language-switch" aria-label="{{ T "languageSwitch" }}">
-      {{ partial "language-switcher.html" . }}
-    </nav>
-  </header>
-  <main>
-    {{ block "main" . }}{{ end }}
-  </main>
+  <input type="checkbox" id="dark-toggle" class="sr-only">
+  <div class="page-wrapper">
+    <header class="site-header">
+      <label for="dark-toggle" class="dark-toggle-btn" role="button" aria-label="{{ T "darkModeToggle" }}">
+        <span class="toggle-icon toggle-icon--light" aria-hidden="true">&#9788;</span>
+        <span class="toggle-icon toggle-icon--dark" aria-hidden="true">&#9790;</span>
+      </label>
+      <nav class="language-switch" aria-label="{{ T "languageSwitch" }}">
+        {{ partial "language-switcher.html" . }}
+      </nav>
+    </header>
+    <main>
+      {{ block "main" . }}{{ end }}
+    </main>
+  </div>
 </body>
 </html>

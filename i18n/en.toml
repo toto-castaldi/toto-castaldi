@@ -9,3 +9,6 @@ other = "Language"
 
 [viewProject]
 other = "Visit project"
+
+[darkModeToggle]
+other = "Toggle dark mode"

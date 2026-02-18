@@ -4,6 +4,11 @@
   {{ partial "head.html" . }}
 </head>
 <body>
+  <header class="site-header">
+    <nav class="language-switch" aria-label="{{ T "languageSwitch" }}">
+      {{ partial "language-switcher.html" . }}
+    </nav>
+  </header>
   <main>
     {{ block "main" . }}{{ end }}
   </main>

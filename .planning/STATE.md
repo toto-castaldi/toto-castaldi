@@ -5,30 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** Phase 2 complete. Ready for Phase 3.
+**Current focus:** Phase 2 fully complete (including gap closure). Ready for Phase 3.
 
 ## Current Position
 
 Phase: 3 of 3 (SEO and Production Polish)
 Plan: 0 of 0 in current phase
 Status: Ready
-Last activity: 2026-02-18 -- Completed 02-02-PLAN.md
+Last activity: 2026-02-18 -- Completed 02-03-PLAN.md (gap closure: dark mode toggle)
 
-Progress: [########..] 80%
+Progress: [#########.] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 6min
-- Total execution time: 0.37 hours
+- Total plans completed: 5
+- Average duration: 5min
+- Total execution time: 0.40 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 2 | 19min | 10min |
-| 2 | 2 | 3min | 2min |
+| 2 | 3 | 5min | 2min |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -39,6 +39,7 @@ Progress: [########..] 80%
 | Phase 01 P02 | 17min | 3 tasks | 1 files |
 | Phase 02 P01 | 2min | 2 tasks | 6 files |
 | Phase 02 P02 | 1min | 2 tasks | 5 files |
+| Phase 02 P03 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -61,6 +62,9 @@ Recent decisions affecting current work:
 - [Phase 02]: Language switcher shows only alternate language (not current) since with two languages showing both is redundant
 - [Phase 02]: TC monogram SVG favicon with embedded prefers-color-scheme for zero-JS dark mode
 - [Phase 02]: Decorative logo images use alt='' since project name appears in adjacent h2 heading
+- [Phase 02]: CSS-only checkbox :checked + sibling selector for dark mode toggle, no :has() for broader browser support
+- [Phase 02]: page-wrapper with min-height: 100vh covers full viewport so toggle background change is seamless
+- [Phase 02]: Layout centering moved from body to .page-wrapper to allow toggle-driven background on wrapper
 
 ### Pending Todos
 
@@ -75,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 02-02-PLAN.md
-Resume file: .planning/phases/02-bilingual-site-with-design/02-02-SUMMARY.md
+Stopped at: Completed 02-03-PLAN.md
+Resume file: .planning/phases/02-bilingual-site-with-design/02-03-SUMMARY.md

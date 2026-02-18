@@ -13,7 +13,7 @@ A minimal multilingual landing page showcasing three software projects (Docora, 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation and Deploy Pipeline** - Hugo project, multilingual config, GitHub Actions, custom domain with HTTPS
-- [ ] **Phase 2: Bilingual Site with Design** - Project cards, language switcher, responsive layout, typography, dark mode, favicon
+- [x] **Phase 2: Bilingual Site with Design** - Project cards, language switcher, responsive layout, typography, dark mode, favicon
 - [ ] **Phase 3: SEO and Production Polish** - hreflang tags, Open Graph, canonical URLs, final verification
 
 ## Phase Details
@@ -48,7 +48,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md -- Project data, i18n strings, content descriptions, CSS design system with dark mode and typography
 - [x] 02-02-PLAN.md -- Semantic templates, language switcher, project card rendering, favicon
-- [ ] 02-03-PLAN.md -- CSS-only dark mode toggle (gap closure: user-requested manual toggle replacing OS-only prefers-color-scheme)
+- [x] 02-03-PLAN.md -- CSS-only dark mode toggle (gap closure: user-requested manual toggle replacing OS-only prefers-color-scheme)
 
 ### Phase 3: SEO and Production Polish
 **Goal**: The site is discoverable by search engines with correct multilingual signals and renders rich previews when shared on social platforms
@@ -71,5 +71,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and Deploy Pipeline | 2/2 | Complete    | 2026-02-18 |
-| 2. Bilingual Site with Design | 2/3 | In progress | - |
+| 2. Bilingual Site with Design | 3/3 | Complete    | 2026-02-18 |
 | 3. SEO and Production Polish | 0/0 | Not started | - |

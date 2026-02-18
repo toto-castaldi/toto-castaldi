@@ -43,10 +43,11 @@ Plans:
   3. The page renders correctly on mobile (cards stack vertically) and desktop with no horizontal scrolling
   4. The site respects OS dark mode preference, switching color scheme automatically with no JavaScript
   5. Page loads in under 1 second with zero JavaScript in the output
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md -- Project data, i18n strings, content descriptions, CSS design system with dark mode and typography
+- [ ] 02-02-PLAN.md -- Semantic templates, language switcher, project card rendering, favicon
 
 ### Phase 3: SEO and Production Polish
 **Goal**: The site is discoverable by search engines with correct multilingual signals and renders rich previews when shared on social platforms
@@ -69,5 +70,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and Deploy Pipeline | 2/2 | Complete    | 2026-02-18 |
-| 2. Bilingual Site with Design | 0/0 | Not started | - |
+| 2. Bilingual Site with Design | 0/2 | In progress | - |
 | 3. SEO and Production Polish | 0/0 | Not started | - |

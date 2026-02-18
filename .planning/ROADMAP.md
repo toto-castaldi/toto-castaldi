@@ -46,7 +46,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Project data, i18n strings, content descriptions, CSS design system with dark mode and typography
+- [x] 02-01-PLAN.md -- Project data, i18n strings, content descriptions, CSS design system with dark mode and typography
 - [ ] 02-02-PLAN.md -- Semantic templates, language switcher, project card rendering, favicon
 
 ### Phase 3: SEO and Production Polish
@@ -70,5 +70,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and Deploy Pipeline | 2/2 | Complete    | 2026-02-18 |
-| 2. Bilingual Site with Design | 0/2 | In progress | - |
+| 2. Bilingual Site with Design | 1/2 | In progress | - |
 | 3. SEO and Production Polish | 0/0 | Not started | - |

@@ -16,10 +16,10 @@
 ### Content
 
 - [ ] **CONT-01**: Home page with project cards showing name, short description, and link for each project
-- [ ] **CONT-02**: Three projects displayed: Docora (docora.toto-castaldi.com), Lumio (lumio.toto-castaldi.com), Helix (helix.toto-castaldi.com)
-- [ ] **CONT-03**: Project data stored in `data/projects.toml` with per-language fields
-- [ ] **CONT-04**: Proper `<title>` and meta description per language
-- [ ] **CONT-05**: i18n string files for UI labels in Italian and English
+- [x] **CONT-02**: Three projects displayed: Docora (docora.toto-castaldi.com), Lumio (lumio.toto-castaldi.com), Helix (helix.toto-castaldi.com)
+- [x] **CONT-03**: Project data stored in `data/projects.toml` with per-language fields
+- [x] **CONT-04**: Proper `<title>` and meta description per language
+- [x] **CONT-05**: i18n string files for UI labels in Italian and English
 - [ ] **CONT-06**: Favicon (SVG with dark mode support)
 
 ### UI
@@ -27,15 +27,15 @@
 - [ ] **UI-01**: Text-based language switcher (IT/EN) in header
 - [ ] **UI-02**: Responsive layout that stacks project cards vertically on mobile
 - [ ] **UI-03**: Semantic HTML with proper heading hierarchy and `lang` attribute
-- [ ] **UI-04**: Zero JavaScript — pure HTML + CSS
-- [ ] **UI-05**: Page load under 1 second
+- [x] **UI-04**: Zero JavaScript — pure HTML + CSS
+- [x] **UI-05**: Page load under 1 second
 
 ### Design
 
-- [ ] **DSGN-01**: Minimal clean design with whitespace-heavy layout and strong typography
-- [ ] **DSGN-02**: Dark mode via CSS `prefers-color-scheme` (no JS toggle)
-- [ ] **DSGN-03**: Modular typography scale with CSS custom properties
-- [ ] **DSGN-04**: WCAG AA contrast ratios (4.5:1 body text, 3:1 large text)
+- [x] **DSGN-01**: Minimal clean design with whitespace-heavy layout and strong typography
+- [x] **DSGN-02**: Dark mode via CSS `prefers-color-scheme` (no JS toggle)
+- [x] **DSGN-03**: Modular typography scale with CSS custom properties
+- [x] **DSGN-04**: WCAG AA contrast ratios (4.5:1 body text, 3:1 large text)
 
 ### SEO
 
@@ -82,20 +82,20 @@
 | INFR-04 | Phase 1 | Complete |
 | INFR-05 | Phase 1 | Complete |
 | CONT-01 | Phase 2 | Pending |
-| CONT-02 | Phase 2 | Pending |
-| CONT-03 | Phase 2 | Pending |
-| CONT-04 | Phase 2 | Pending |
-| CONT-05 | Phase 2 | Pending |
+| CONT-02 | Phase 2 | Complete |
+| CONT-03 | Phase 2 | Complete |
+| CONT-04 | Phase 2 | Complete |
+| CONT-05 | Phase 2 | Complete |
 | CONT-06 | Phase 2 | Pending |
 | UI-01 | Phase 2 | Pending |
 | UI-02 | Phase 2 | Pending |
 | UI-03 | Phase 2 | Pending |
-| UI-04 | Phase 2 | Pending |
-| UI-05 | Phase 2 | Pending |
-| DSGN-01 | Phase 2 | Pending |
-| DSGN-02 | Phase 2 | Pending |
-| DSGN-03 | Phase 2 | Pending |
-| DSGN-04 | Phase 2 | Pending |
+| UI-04 | Phase 2 | Complete |
+| UI-05 | Phase 2 | Complete |
+| DSGN-01 | Phase 2 | Complete |
+| DSGN-02 | Phase 2 | Complete |
+| DSGN-03 | Phase 2 | Complete |
+| DSGN-04 | Phase 2 | Complete |
 | SEO-01 | Phase 3 | Pending |
 | SEO-02 | Phase 3 | Pending |
 | SEO-03 | Phase 3 | Pending |

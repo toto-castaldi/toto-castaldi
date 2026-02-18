@@ -48,7 +48,7 @@
 }
 
 /* ============================================
-   Design Tokens - Dark Mode
+   Design Tokens - Dark Mode (OS preference default)
    ============================================ */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -60,6 +60,44 @@
     --color-link-hover: #93bbfd;
     --color-card-bg: #1f2937;
   }
+
+  .page-wrapper {
+    --color-bg: #111827;
+    --color-text: #f3f4f6;
+    --color-text-muted: #9ca3af;
+    --color-border: #374151;
+    --color-link: #60a5fa;
+    --color-link-hover: #93bbfd;
+    --color-card-bg: #1f2937;
+  }
+}
+
+/* ============================================
+   Checkbox Toggle - Light OS -> Dark override
+   ============================================ */
+#dark-toggle:checked + .page-wrapper {
+  --color-bg: #111827;
+  --color-text: #f3f4f6;
+  --color-text-muted: #9ca3af;
+  --color-border: #374151;
+  --color-link: #60a5fa;
+  --color-link-hover: #93bbfd;
+  --color-card-bg: #1f2937;
+}
+
+/* ============================================
+   Checkbox Toggle - Dark OS -> Light override
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  #dark-toggle:checked + .page-wrapper {
+    --color-bg: #ffffff;
+    --color-text: #1a1a1a;
+    --color-text-muted: #6b7280;
+    --color-border: #e5e7eb;
+    --color-link: #2563eb;
+    --color-link-hover: #1d4ed8;
+    --color-card-bg: #ffffff;
+  }
 }
 
 /* ============================================
@@ -69,11 +107,17 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
   font-size: var(--font-size-base);
   line-height: var(--line-height-body);
-  color: var(--color-text);
-  background: var(--color-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.page-wrapper {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: var(--space-xl) var(--space-md);
+  color: var(--color-text);
+  background: var(--color-bg);
+  min-height: 100vh;
 }
 
 h1 {
@@ -114,10 +158,10 @@ img {
    Layout Components
    ============================================ */
 
-/* Site Header - language switcher goes top-right */
+/* Site Header - toggle left, language switcher right */
 .site-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding-bottom: var(--space-lg);
 }
@@ -201,6 +245,45 @@ img {
 
 .language-switch a:hover {
   color: var(--color-link);
+}
+
+/* ============================================
+   Dark Mode Toggle Button
+   ============================================ */
+.dark-toggle-btn {
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  padding: var(--space-xs);
+  border-radius: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.dark-toggle-btn:hover {
+  color: var(--color-text);
+}
+
+/* Toggle Icon Visibility - Light mode: show sun, hide moon */
+.toggle-icon--dark { display: none; }
+.toggle-icon--light { display: inline; }
+
+/* OS dark mode: show moon, hide sun */
+@media (prefers-color-scheme: dark) {
+  .toggle-icon--dark { display: inline; }
+  .toggle-icon--light { display: none; }
+}
+
+/* Toggle checked in light OS: show moon (now dark) */
+#dark-toggle:checked + .page-wrapper .toggle-icon--dark { display: inline; }
+#dark-toggle:checked + .page-wrapper .toggle-icon--light { display: none; }
+
+/* Toggle checked in dark OS: show sun (now light) */
+@media (prefers-color-scheme: dark) {
+  #dark-toggle:checked + .page-wrapper .toggle-icon--dark { display: none; }
+  #dark-toggle:checked + .page-wrapper .toggle-icon--light { display: inline; }
 }
 
 /* Screen Reader Only Utility */

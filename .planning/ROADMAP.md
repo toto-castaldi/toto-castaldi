@@ -58,10 +58,10 @@ Plans:
   1. Each language version includes hreflang tags pointing to its counterpart and an x-default, with all references using absolute URLs
   2. Sharing a page URL on a platform like LinkedIn or Slack shows a rich preview with correct title, description, and locale
   3. Each language version has a canonical URL pointing to itself, preventing duplicate content signals
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md -- hreflang tags, canonical URLs, Open Graph meta tags via SEO partial
 
 ## Progress
 

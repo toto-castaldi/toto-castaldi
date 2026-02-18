@@ -1,6 +1,21 @@
 {{ define "main" }}
 <section>
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
+  <h1 class="page-title">{{ .Title }}</h1>
+  <p class="tagline">{{ T "tagline" }}</p>
+</section>
+
+<section class="project-cards" aria-label="{{ T "tagline" }}">
+  {{ range .Site.Data.projects.project }}
+  <article class="project-card">
+    {{ if .logo }}
+    <img src="{{ .logo }}" alt="" class="project-logo" loading="lazy" width="48" height="48">
+    {{ end }}
+    <h2>{{ .name }}</h2>
+    <p>{{ index .description site.Language.Lang }}</p>
+    <a href="{{ .url }}" class="card-link">
+      <span class="sr-only">{{ T "viewProject" }}: </span>{{ .name }}
+    </a>
+  </article>
+  {{ end }}
 </section>
 {{ end }}

@@ -3,21 +3,21 @@ name = "Docora"
 url = "https://docora.toto-castaldi.com"
 logo = "https://docora.toto-castaldi.com/images/logo.svg"
 [project.description]
-it = "Generazione intelligente di documenti e template personalizzati"
-en = "Intelligent document generation and custom templates"
+it = "Controllo e notifica di cambiamenti su repository GitHub"
+en = "Headless GitHub repository monitoring with push-based file notifications"
 
 [[project]]
 name = "Lumio"
 url = "https://lumio.toto-castaldi.com"
 logo = "https://lumio.toto-castaldi.com/logo.svg"
 [project.description]
-it = "Strumenti per la visualizzazione e l'analisi dei dati"
-en = "Data visualization and analysis tools"
+it = "Studia in modo intelligente con flashcard generate dall'AI"
+en = "Study smarter with AI-powered flashcards"
 
 [[project]]
 name = "Helix"
 url = "https://helix.toto-castaldi.com"
 logo = "https://helix.toto-castaldi.com/logo.svg"
 [project.description]
-it = "Piattaforma per l'automazione e l'integrazione di servizi"
-en = "Service automation and integration platform"
+it = "L'AI al servizio del fitness Coach"
+en = "Coach fitness AI assistant"

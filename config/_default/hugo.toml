@@ -1,0 +1,4 @@
+baseURL = 'https://toto-castaldi.com/'
+title = 'Antonio Toto Castaldi'
+defaultContentLanguage = 'it'
+defaultContentLanguageInSubdir = true

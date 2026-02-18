@@ -1,0 +1,11 @@
+[it]
+  languageCode = 'it'
+  languageName = 'Italiano'
+  title = 'Antonio Toto Castaldi'
+  weight = 1
+
+[en]
+  languageCode = 'en'
+  languageName = 'English'
+  title = 'Antonio Toto Castaldi'
+  weight = 2

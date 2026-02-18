@@ -10,30 +10,31 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 1 of 3 (Foundation and Deploy Pipeline)
-Plan: 0 of 0 in current phase (not yet planned)
-Status: Ready to plan
-Last activity: 2026-02-17 -- Roadmap created
+Plan: 1 of 2 in current phase (01-01-PLAN.md complete)
+Status: Executing
+Last activity: 2026-02-18 -- Completed 01-01-PLAN.md
 
-Progress: [..........] 0%
+Progress: [##........] 17%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: 2min
+- Total execution time: 0.03 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 1 | 1 | 2min | 2min |
 
 **Recent Trend:**
 - Last 5 plans: -
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01 P01 | 2min | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -44,6 +45,9 @@ Recent decisions affecting current work:
 
 - [Roadmap]: 3-phase structure -- infrastructure first, then full bilingual site, then SEO polish
 - [Roadmap]: defaultContentLanguageInSubdir must be decided in Phase 1 before any content exists
+- [Phase 01]: Italian as defaultContentLanguage with defaultContentLanguageInSubdir=true for symmetric /it/ and /en/ paths
+- [Phase 01]: Hardcoded baseURL in hugo.toml, no --baseURL flag in CI workflow
+- [Phase 01]: Static bilingual 404.html workaround for Hugo issue #5161
 
 ### Pending Todos
 
@@ -57,6 +61,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation-and-deploy-pipeline/01-CONTEXT.md
+Last session: 2026-02-18
+Stopped at: Completed 01-01-PLAN.md
+Resume file: .planning/phases/01-foundation-and-deploy-pipeline/01-01-SUMMARY.md

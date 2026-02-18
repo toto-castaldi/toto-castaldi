@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Hugo project scaffold, bilingual config, templates, GitHub Actions workflow, CNAME, 404 page
+- [x] 01-01-PLAN.md -- Hugo project scaffold, bilingual config, templates, GitHub Actions workflow, CNAME, 404 page
 - [ ] 01-02-PLAN.md -- GitHub Pages configuration, custom domain DNS, HTTPS verification
 
 ### Phase 2: Bilingual Site with Design
@@ -68,6 +68,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and Deploy Pipeline | 0/0 | Not started | - |
+| 1. Foundation and Deploy Pipeline | 1/2 | In Progress | - |
 | 2. Bilingual Site with Design | 0/0 | Not started | - |
 | 3. SEO and Production Polish | 0/0 | Not started | - |

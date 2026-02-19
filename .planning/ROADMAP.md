@@ -34,7 +34,10 @@
   3. Cards have a visually distinct background from the page in both light and dark mode
   4. Dark/light toggle still works in all 4 states (OS-light unchecked, OS-light checked, OS-dark unchecked, OS-dark checked)
   5. Page container is wide enough (~1080px) that 3 columns of content would fit comfortably
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 04-01-PLAN.md -- WCAG AA contrast tokens + container restructure
 
 ### Phase 5: Bento Grid Layout
 **Goal**: Landing page displays project cards in a responsive bento grid that adapts from 3 columns (desktop) to 1 column (mobile)

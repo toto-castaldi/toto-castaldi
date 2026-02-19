@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-19)
 ## Current Position
 
 Phase: 4 of 6 (Design Tokens and Container)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-02-19 -- Roadmap created for v1.1
+Plan: 1 of 1 in current phase (COMPLETE)
+Status: Phase 4 complete
+Last activity: 2026-02-19 -- Executed 04-01 design tokens and container
 
-Progress: [######░░░░] 50% (3/6 phases complete across all milestones)
+Progress: [########░░] 67% (4/6 phases complete across all milestones)
 
 ## Performance Metrics
 
@@ -24,8 +24,8 @@ Progress: [######░░░░] 50% (3/6 phases complete across all milestones)
 - Execution time: 0.43 hours
 
 **v1.1:**
-- Plans completed: 0
-- Execution time: 0
+- Plans completed: 1
+- Execution time: 2 min
 
 ## Accumulated Context
 
@@ -37,6 +37,8 @@ Recent decisions affecting current work:
 - v1.1: Stay with plain CSS (no SCSS migration) -- under 500 lines, custom properties sufficient
 - v1.1: Keep checkbox-hack dark mode toggle -- 100% browser support, already working
 - v1.1: Fix contrast tokens before any visual work -- prerequisite for all bento styling
+- v1.1: Tailwind Slate palette for dark mode tokens (better contrast than gray)
+- v1.1: Separate page-wrapper (full-width bg) from container (content constraint)
 
 ### Pending Todos
 
@@ -44,12 +46,12 @@ None.
 
 ### Blockers/Concerns
 
-- Light mode border contrast at 1.24:1 (needs 3:1) -- Phase 4 will fix
-- Dark mode border contrast at 1.72:1 (needs 3:1) -- Phase 4 will fix
-- Template restructure risks breaking dark mode toggle sibling selector -- Phase 5 risk
+- ~~Light mode border contrast at 1.24:1 (needs 3:1)~~ -- FIXED in Phase 4 (now 3.18:1)
+- ~~Dark mode border contrast at 1.72:1 (needs 3:1)~~ -- FIXED in Phase 4 (now 3.07:1)
+- Template restructure risks breaking dark mode toggle sibling selector -- Mitigated: Phase 4 already restructured (container is descendant, toggle selectors preserved)
 
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Roadmap created for v1.1, ready to plan Phase 4
+Stopped at: Completed 04-01-PLAN.md (Design Tokens and Container)
 Resume file: None

@@ -12,16 +12,16 @@ Requirements for the bento grid restyling milestone. Each maps to roadmap phases
 - [ ] **LAYOUT-01**: Landing page uses CSS Grid with 3 columns on desktop (>1024px)
 - [ ] **LAYOUT-02**: Grid adapts to 2 columns on tablet (481-1024px)
 - [ ] **LAYOUT-03**: Grid adapts to 1 column on mobile (<=480px)
-- [ ] **LAYOUT-04**: Container max-width increases from 680px to ~1080px
+- [x] **LAYOUT-04**: Container max-width increases from 680px to ~1080px
 - [ ] **LAYOUT-05**: Additional bento sections beyond project cards (tech stack, GitHub link, or similar)
 
 ### Theme
 
-- [ ] **THEME-01**: Light mode legible with WCAG AA contrast on all elements
-- [ ] **THEME-02**: Dark mode legible with WCAG AA contrast on all elements
-- [ ] **THEME-03**: Dark/light toggle functional (checkbox hack preserved)
-- [ ] **THEME-04**: Cards visually distinct from background in both themes
-- [ ] **THEME-05**: Border contrast >= 3:1 for UI components (WCAG SC 1.4.11)
+- [x] **THEME-01**: Light mode legible with WCAG AA contrast on all elements
+- [x] **THEME-02**: Dark mode legible with WCAG AA contrast on all elements
+- [x] **THEME-03**: Dark/light toggle functional (checkbox hack preserved)
+- [x] **THEME-04**: Cards visually distinct from background in both themes
+- [x] **THEME-05**: Border contrast >= 3:1 for UI components (WCAG SC 1.4.11)
 
 ### Styling
 
@@ -29,7 +29,7 @@ Requirements for the bento grid restyling milestone. Each maps to roadmap phases
 - [ ] **STYLE-02**: Cards with shadows/depth in light mode
 - [ ] **STYLE-03**: Hover effects on project cards
 - [ ] **STYLE-04**: Consistent typography with modular scale
-- [ ] **STYLE-05**: Off-white page background in light mode to differentiate cards
+- [x] **STYLE-05**: Off-white page background in light mode to differentiate cards
 
 ## Future Requirements
 
@@ -63,18 +63,18 @@ Requirements for the bento grid restyling milestone. Each maps to roadmap phases
 | LAYOUT-01 | Phase 5 | Pending |
 | LAYOUT-02 | Phase 5 | Pending |
 | LAYOUT-03 | Phase 5 | Pending |
-| LAYOUT-04 | Phase 4 | Pending |
+| LAYOUT-04 | Phase 4 | Complete |
 | LAYOUT-05 | Phase 6 | Pending |
-| THEME-01 | Phase 4 | Pending |
-| THEME-02 | Phase 4 | Pending |
-| THEME-03 | Phase 4 | Pending |
-| THEME-04 | Phase 4 | Pending |
-| THEME-05 | Phase 4 | Pending |
+| THEME-01 | Phase 4 | Complete |
+| THEME-02 | Phase 4 | Complete |
+| THEME-03 | Phase 4 | Complete |
+| THEME-04 | Phase 4 | Complete |
+| THEME-05 | Phase 4 | Complete |
 | STYLE-01 | Phase 5 | Pending |
 | STYLE-02 | Phase 6 | Pending |
 | STYLE-03 | Phase 6 | Pending |
 | STYLE-04 | Phase 5 | Pending |
-| STYLE-05 | Phase 4 | Pending |
+| STYLE-05 | Phase 4 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 15 total

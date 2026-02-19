@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** Phase 4 - Design Tokens and Container
+**Current focus:** Phase 5 - Bento Grid Layout
 
 ## Current Position
 
-Phase: 4 of 6 (Design Tokens and Container)
+Phase: 5 of 6 (Bento Grid Layout)
 Plan: 1 of 1 in current phase (COMPLETE)
-Status: Phase 4 complete
-Last activity: 2026-02-19 -- Executed 04-01 design tokens and container
+Status: Phase 5 complete
+Last activity: 2026-02-19 -- Executed 05-01 bento grid layout
 
-Progress: [########░░] 67% (4/6 phases complete across all milestones)
+Progress: [#########░] 83% (5/6 phases complete across all milestones)
 
 ## Performance Metrics
 
@@ -24,8 +24,8 @@ Progress: [########░░] 67% (4/6 phases complete across all milestones)
 - Execution time: 0.43 hours
 
 **v1.1:**
-- Plans completed: 1
-- Execution time: 2 min
+- Plans completed: 2
+- Execution time: 3 min
 
 ## Accumulated Context
 
@@ -39,6 +39,8 @@ Recent decisions affecting current work:
 - v1.1: Fix contrast tokens before any visual work -- prerequisite for all bento styling
 - v1.1: Tailwind Slate palette for dark mode tokens (better contrast than gray)
 - v1.1: Separate page-wrapper (full-width bg) from container (content constraint)
+- v1.1: Explicit repeat(N, 1fr) over auto-fit/auto-fill for deterministic 3-item layout
+- v1.1: 0.75rem card radius via --radius-card token (up from hardcoded 0.5rem)
 
 ### Pending Todos
 
@@ -53,5 +55,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 04-01-PLAN.md (Design Tokens and Container)
+Stopped at: Completed 05-01-PLAN.md (Bento Grid Layout)
 Resume file: None

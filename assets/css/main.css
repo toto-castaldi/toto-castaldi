@@ -16,10 +16,10 @@
    ============================================ */
 :root {
   /* Colors */
-  --color-bg: #ffffff;
+  --color-bg: #f9fafb;
   --color-text: #1a1a1a;
   --color-text-muted: #6b7280;
-  --color-border: #e5e7eb;
+  --color-border: #8891a0;
   --color-link: #2563eb;
   --color-link-hover: #1d4ed8;
   --color-card-bg: #ffffff;
@@ -44,7 +44,7 @@
   --line-height-heading: 1.2;
 
   /* Layout */
-  --max-width: 680px;
+  --max-width: 1080px;
 }
 
 /* ============================================
@@ -52,23 +52,23 @@
    ============================================ */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #111827;
-    --color-text: #f3f4f6;
-    --color-text-muted: #9ca3af;
-    --color-border: #374151;
+    --color-bg: #0f172a;
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-border: #64748b;
     --color-link: #60a5fa;
     --color-link-hover: #93bbfd;
-    --color-card-bg: #1f2937;
+    --color-card-bg: #1e293b;
   }
 
   .page-wrapper {
-    --color-bg: #111827;
-    --color-text: #f3f4f6;
-    --color-text-muted: #9ca3af;
-    --color-border: #374151;
+    --color-bg: #0f172a;
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-border: #64748b;
     --color-link: #60a5fa;
     --color-link-hover: #93bbfd;
-    --color-card-bg: #1f2937;
+    --color-card-bg: #1e293b;
   }
 }
 
@@ -76,13 +76,13 @@
    Checkbox Toggle - Light OS -> Dark override
    ============================================ */
 #dark-toggle:checked + .page-wrapper {
-  --color-bg: #111827;
-  --color-text: #f3f4f6;
-  --color-text-muted: #9ca3af;
-  --color-border: #374151;
+  --color-bg: #0f172a;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-border: #64748b;
   --color-link: #60a5fa;
   --color-link-hover: #93bbfd;
-  --color-card-bg: #1f2937;
+  --color-card-bg: #1e293b;
 }
 
 /* ============================================
@@ -90,10 +90,10 @@
    ============================================ */
 @media (prefers-color-scheme: dark) {
   #dark-toggle:checked + .page-wrapper {
-    --color-bg: #ffffff;
+    --color-bg: #f9fafb;
     --color-text: #1a1a1a;
     --color-text-muted: #6b7280;
-    --color-border: #e5e7eb;
+    --color-border: #8891a0;
     --color-link: #2563eb;
     --color-link-hover: #1d4ed8;
     --color-card-bg: #ffffff;
@@ -107,6 +107,7 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
   font-size: var(--font-size-base);
   line-height: var(--line-height-body);
+  background: var(--color-bg);
   margin: 0;
   padding: 0;
 }

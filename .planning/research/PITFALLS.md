@@ -1,270 +1,281 @@
-# Pitfalls Research
+# Domain Pitfalls
 
-**Domain:** Hugo multilingual landing page on GitHub Pages (IT/EN, custom domain)
-**Researched:** 2026-02-17
-**Confidence:** HIGH (verified against official Hugo docs + GitHub Pages docs + community reports)
+**Domain:** Bento grid redesign + dark/light theme overhaul for existing Hugo landing page
+**Researched:** 2026-02-19
+**Confidence:** HIGH (codebase analysis + verified community patterns + official CSS/Hugo docs)
 
 ## Critical Pitfalls
 
-### Pitfall 1: CNAME File Wiped on Every Deployment
+Mistakes that cause visual breakage, accessibility failure, or require rewriting completed work.
 
-**What goes wrong:**
-Each GitHub Actions deployment rebuilds the `public/` directory from scratch. If the CNAME file only exists in the gh-pages branch (or was added via GitHub's Settings UI), it gets overwritten on every push, causing the custom domain (`toto-castaldi.com`) to detach. The site reverts to `username.github.io` and HTTPS breaks.
+### Pitfall 1: Checkbox Hack Dark Mode Breaks When Grid Structure Changes
 
-**Why it happens:**
-GitHub Pages adds a CNAME file to the deployment branch when you set the custom domain through the UI. Developers assume this persists across deployments. It does not -- the next Hugo build replaces the entire deployment artifact.
+**What goes wrong:** The current dark mode uses `#dark-toggle:checked + .page-wrapper` -- the adjacent sibling combinator (`+`). This means `.page-wrapper` MUST be the immediate next sibling of the checkbox input. If the bento grid redesign introduces any wrapper element between `#dark-toggle` and `.page-wrapper`, or moves the checkbox inside `.page-wrapper`, the entire dark mode toggle silently stops working. No error, no warning -- just a toggle that does nothing.
 
-**How to avoid:**
-Place a `static/CNAME` file in the Hugo source repository containing `toto-castaldi.com` (just the domain, no protocol, no trailing newline). Hugo copies everything from `static/` to the root of the build output, so the CNAME survives every deployment.
+**Why it happens:** During a layout overhaul, developers naturally restructure the DOM to accommodate the new grid. Adding a grid container, moving elements around, or wrapping sections in new divs is reflexive. The sibling selector constraint is invisible -- it's not documented in any template, only implicit in the CSS.
 
-```
-# static/CNAME (entire file contents)
-toto-castaldi.com
-```
+**Consequences:** Dark mode toggle appears functional (checkbox still toggles) but no visual change occurs. All 4 CSS variable override blocks (lines 78-101 of current `main.css`) plus 4 icon-visibility blocks (lines 280-287) stop matching. The site is locked to whatever the OS preference is.
 
-**Warning signs:**
-- Custom domain disappears from GitHub Pages settings after a push
-- Site loads at `username.github.io` instead of the custom domain
-- HTTPS enforcement checkbox becomes unchecked
+**Prevention:**
+1. **Before touching HTML:** Add a comment in `baseof.html` on the checkbox line: `<!-- CRITICAL: #dark-toggle must be immediately before .page-wrapper (CSS + sibling selector) -->`
+2. **After every HTML change:** Test dark mode toggle in both OS light and OS dark mode
+3. **Consider upgrading to `:has()` selector:** `body:has(#dark-toggle:checked)` eliminates the sibling constraint entirely. `:has()` is Baseline Widely Available (Chrome 105+, Safari 15.4+, Firefox 121+, Edge 105+) -- safe for 2026. This decouples the toggle from DOM position.
 
-**Phase to address:** Phase 1 (project scaffolding) -- must be present from the very first deployment.
+**Detection:** Toggle button click produces no visual change. Easy to miss if only testing in one OS color scheme.
+
+**Phase to address:** Phase 1 (before any HTML restructuring). Either lock down the DOM constraint with comments and tests, or migrate to `:has()` first.
 
 ---
 
-### Pitfall 2: baseURL Mismatch Breaks All Asset Paths
+### Pitfall 2: Bento Grid Source Order vs. Visual Order Breaks Accessibility
 
-**What goes wrong:**
-CSS, JavaScript, and images all 404 on the deployed site while working perfectly on `localhost:1313`. The page loads as unstyled raw HTML. This is the single most reported Hugo + GitHub Pages problem in community forums.
+**What goes wrong:** CSS Grid's `grid-column`, `grid-row`, and `grid-template-areas` let you place items anywhere visually. The bento layout's appeal is asymmetric, varied-size tiles. But screen readers and keyboard tab order follow DOM source order, not visual order. A visually logical layout can produce a nonsensical reading sequence for assistive technology users.
 
-**Why it happens:**
-Hugo defaults `baseURL` to `http://localhost:1313/` during development. If the production `baseURL` is missing, wrong, or lacks a trailing slash, all absolute paths in templates resolve incorrectly. Common mistakes: setting `baseURL = "https://toto-castaldi.com"` (missing trailing slash), or leaving it as the default.
+**Why it happens:** Developers design the grid visually first (placing the "hero" card spanning 2 columns in the center, smaller cards around it) then discover the HTML source order doesn't match. The temptation is to use CSS placement to "fix" the visual order without changing HTML, creating a mismatch.
 
-**How to avoid:**
-Set `baseURL` in `hugo.toml` to the exact production URL with trailing slash:
+**Consequences:** WCAG 1.3.2 (Meaningful Sequence) violation. Screen readers announce cards in a random-seeming order. Tab key jumps unpredictably across the page. For a 3-project site this is manageable, but it's still a failure point for accessibility audits.
 
-```toml
-baseURL = "https://toto-castaldi.com/"
-```
+**Prevention:**
+1. **Design HTML source order FIRST.** Write the HTML in the order you want it read aloud. For 3 project cards + a hero section, the natural order is: hero/title, then Docora, Lumio, Helix.
+2. **Use `grid-template-areas` to map visual layout.** Areas let you name positions and rearrange visually without reordering HTML -- but only if the source order was logical to begin with.
+3. **Test with keyboard-only navigation.** Tab through the page; the focus order should flow logically top-to-bottom, left-to-right.
+4. **Avoid `order` property on grid items.** It changes visual order but not tab/reading order, creating exactly the mismatch you want to avoid.
 
-Use `relURL` and `absURL` template functions for all asset references. Never hardcode paths. The trailing slash is explicitly recommended by Hugo's official documentation.
+**Detection:** Tab through the deployed page with keyboard only. If focus jumps visually (e.g., from top-left to bottom-right, then back to top-right), source order is wrong.
 
-**Warning signs:**
-- Site works locally but is unstyled on GitHub Pages
-- Browser dev console shows 404 for CSS/JS files
-- Asset URLs contain `localhost` or have doubled path segments
-
-**Phase to address:** Phase 1 (project scaffolding) -- must be correct before first deployment.
+**Phase to address:** Phase 1 (HTML structure design). Must be decided before writing any CSS grid rules.
 
 ---
 
-### Pitfall 3: defaultContentLanguageInSubdir Misconfiguration Creates Broken URL Structure
+### Pitfall 3: Dark Mode Contrast Fails WCAG AA in One Theme But Not the Other
 
-**What goes wrong:**
-With `defaultContentLanguageInSubdir = false` (the default), Italian content lives at `/` and English at `/en/`. This seems intuitive but creates problems: the root URL has no language prefix, making the language switcher asymmetric, and Hugo does not generate redirect stubs for the default language's sections. Visitors hitting `/it/` get a 404 because that path does not exist.
+**What goes wrong:** Colors that pass WCAG AA 4.5:1 contrast ratio in light mode fail in dark mode (or vice versa). The current site has `--color-text-muted: #6b7280` on `--color-bg: #ffffff` (light) = 5.0:1 ratio (passes AA). Dark mode has `--color-text-muted: #9ca3af` on `--color-bg: #111827` = 4.2:1 (FAILS AA for normal text). This existing bug will compound when adding more color tokens for bento card backgrounds, borders, and accent colors.
 
-With `defaultContentLanguageInSubdir = true`, both languages get prefixes (`/it/` and `/en/`), and Hugo generates a redirect at `/` pointing to `/it/`. This is cleaner but the redirect is an HTML meta-refresh (not a server 301), which adds latency and is imperfect for SEO.
+**Why it happens:** Designers pick colors that "look right" in one mode and assume inverting them works for the other. Dark mode is not just light mode with swapped background/foreground -- the contrast math is asymmetric. Adding card-specific background colors (e.g., for bento tiles with colored headers) multiplies the number of foreground/background pairs that must each individually pass contrast checks.
 
-**Why it happens:**
-Developers don't think through the URL structure implications before building content and templates. Changing this setting later moves every URL, breaking bookmarks, search indexes, and any external links.
+**Consequences:** WCAG AA failure. Legal risk in some jurisdictions. More practically: muted text becomes genuinely unreadable for users with low vision, especially on mobile screens in sunlight (light mode) or in dark rooms (dark mode).
 
-**How to avoid:**
-For a two-language site like IT/EN, use `defaultContentLanguageInSubdir = true` so both languages have symmetric URL structures (`/it/` and `/en/`). This is slightly more work upfront but prevents URL asymmetry problems. Decide this before creating any content -- changing it later is a rewrite of all internal links.
+**Prevention:**
+1. **Audit every color pair in both themes BEFORE coding.** Use WebAIM Contrast Checker for each `--color-*` token against its expected background.
+2. **Current dark mode `--color-text-muted` needs fixing.** Change from `#9ca3af` to `#a1a9b8` or lighter to achieve 4.5:1 against `#111827`.
+3. **If adding bento tile accent colors,** create a contrast matrix: every foreground color x every background color it could appear on x both themes. For 3 projects with distinct accent colors, that's ~18 pairs minimum.
+4. **Use `color-contrast()` CSS function** if targeting modern browsers (currently limited support -- verify before relying on it).
+5. **WCAG AA requirements:** 4.5:1 for normal text, 3:1 for large text (18px bold or 24px regular), 3:1 for UI components and graphical objects.
 
-```toml
-defaultContentLanguage = "it"
-defaultContentLanguageInSubdir = true
-```
+**Detection:** Run axe-core or Lighthouse accessibility audit on both themes. Check the "Color Contrast" section specifically.
 
-**Warning signs:**
-- Language switcher links are asymmetric (one has a prefix, the other doesn't)
-- 404s on `/it/` paths when Italian is the default language
-- Confusion about whether `/` and `/it/` should show the same content
-
-**Phase to address:** Phase 1 (project scaffolding) -- this is a Day 0 architecture decision.
+**Phase to address:** Phase 1 (design tokens). Fix existing contrast bug and validate all new tokens before building any grid components.
 
 ---
 
-### Pitfall 4: DNS Order-of-Operations Causes Domain Takeover Risk or Certificate Failure
+### Pitfall 4: Bento Grid Collapses to Identical-Width Stacked Blocks on Mobile
 
-**What goes wrong:**
-Configuring DNS records before adding the custom domain in GitHub Pages settings opens a window for domain takeover -- someone else could claim your domain on their GitHub Pages site. Conversely, adding the domain in GitHub but misconfiguring DNS causes HTTPS certificate provisioning to fail silently, and the "Enforce HTTPS" checkbox never becomes available.
+**What goes wrong:** The carefully designed desktop bento layout with varied tile sizes (1x1, 2x1, 1x2 spanning cards) collapses to a single column on mobile where every card looks identical. The visual hierarchy -- the entire point of bento -- is lost. The page becomes a boring vertical stack indistinguishable from the current non-bento design.
 
-**Why it happens:**
-The GitHub Pages documentation explicitly warns about configuration order but developers often set up DNS first (it feels like the natural first step). The HTTPS certificate is only provisioned after both DNS and the GitHub Pages custom domain setting are correctly configured, and it can take up to 24 hours.
+**Why it happens:** The default responsive approach is `grid-template-columns: 1fr` on mobile. This makes every card full-width, destroying size variation. Developers add breakpoints for desktop but treat mobile as an afterthought single-column layout.
 
-**How to avoid:**
-Follow this exact order:
-1. Add `toto-castaldi.com` as custom domain in GitHub repo Settings > Pages
-2. Create DNS A records for apex: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-3. Create DNS CNAME record: `www.toto-castaldi.com` -> `toto-castaldi.github.io`
-4. Wait for DNS propagation (up to 24h)
-5. Enable "Enforce HTTPS" once the checkbox appears
-6. Never use wildcard DNS records (`*.toto-castaldi.com`) -- GitHub docs explicitly warn these create "immediate risk of domain takeovers"
+**Consequences:** Mobile users (typically 60%+ of traffic) never see the bento design. The redesign effort is invisible to the majority of visitors. Worse: if cards have unequal content lengths, the stacked mobile layout has awkward height variations with no visual logic.
 
-**Warning signs:**
-- "Enforce HTTPS" checkbox is grayed out or missing
-- Browser shows certificate warning on the custom domain
-- `dig toto-castaldi.com` returns incorrect IP addresses
-- GitHub Pages settings shows a DNS check warning
+**Prevention:**
+1. **Design mobile-first with a 2-column minimum.** Even on 320px viewports, a 2-column grid is possible. Use `grid-template-columns: repeat(2, 1fr)` as the mobile base, letting one "hero" card span both columns while others stay 1-column.
+2. **Define 3 breakpoints minimum:** mobile (2-col), tablet (3-col), desktop (4-col). Each needs its own `grid-template-areas` definition.
+3. **Use `aspect-ratio` on grid items** to maintain proportional sizing even when columns change. A card that's 2:1 on desktop should still feel wider-than-tall on mobile.
+4. **Hide decorative-only bento tiles on mobile.** If any tiles are purely visual (no content), hide them below a breakpoint rather than letting them eat vertical space.
+5. **Test on real 320px viewport.** Chrome DevTools' responsive mode is not enough -- test on actual small phones.
 
-**Phase to address:** Phase 1 (infrastructure/deployment setup) -- must be done correctly the first time.
+**Detection:** View on a 375px-wide viewport. If all cards are identical rectangles stacked vertically, the bento design is lost.
+
+**Phase to address:** Phase 2 (responsive implementation). But the grid area names and HTML structure must support this from Phase 1.
 
 ---
 
-### Pitfall 5: Missing or Incorrect hreflang Tags Tank Multilingual SEO
+## Moderate Pitfalls
 
-**What goes wrong:**
-Search engines cannot determine the relationship between the Italian and English versions of each page. Google may index only one language, show the wrong language in search results for a given locale, or flag content as duplicate rather than as translations.
+### Pitfall 5: Hugo CSS Fingerprint Caching Masks Theme Changes During Development
 
-**Why it happens:**
-Hugo does not automatically inject hreflang tags. Developers must add them to the `<head>` partial. Common mistakes (per research, ~75% of hreflang implementations have errors): using relative URLs instead of absolute, forgetting the `x-default` tag, making non-reciprocal references (page A links to B's translation but B doesn't link back to A), or using wrong language codes (`it-IT` vs `it`).
+**What goes wrong:** Hugo's `resources.Fingerprint` (used in the current `head.html`: `resources.Get "css/main.css" | resources.Minify | resources.Fingerprint`) generates a content-hash filename. During rapid CSS iteration, the browser cache aggressively holds the old hashed file. Developers think their CSS changes aren't working when they actually are -- the browser is just serving the cached old version.
 
-**How to avoid:**
-Create a partial template `layouts/partials/hreflang.html`:
+**Why it happens:** The fingerprint changes with every content change, but the browser may cache the old file aggressively if using `hugo server` (which serves from memory and may not bust browser cache between reloads). Additionally, some CDN or service worker caches at the GitHub Pages level can hold stale CSS for minutes.
 
-```html
-{{ if .IsTranslated }}
-{{ range .AllTranslations }}
-<link rel="alternate" hreflang="{{ .Lang }}" href="{{ .Permalink }}">
-{{ end }}
-<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
-{{ end }}
-```
+**Prevention:**
+1. **Use `hugo server --disableFastRender`** during CSS-heavy development to ensure full rebuilds.
+2. **Hard-refresh (Ctrl+Shift+R) after CSS changes** during development.
+3. **After deploying,** verify with a private/incognito window that the new CSS hash is being served.
+4. **Do NOT switch to unhashed CSS filenames** -- the fingerprinting is correct production behavior. Just be aware of its development friction.
 
-Include it in the `<head>` of `baseof.html`. Key rules:
-- Use `.Permalink` (absolute URL), never `.RelPermalink`
-- Include `x-default` pointing to the default language version
-- Ensure every page includes hreflang for ALL its translations (reciprocal)
-- Use simple language codes (`it`, `en`) matching Hugo's language keys
+**Detection:** CSS changes visible in source file but not in browser. Hash in CSS filename unchanged after modification.
 
-**Warning signs:**
-- Google Search Console shows "hreflang" warnings
-- Same page indexed in wrong language for a locale
-- Missing "alternate" link tags when viewing page source
-
-**Phase to address:** Phase 2 (multilingual content/templates) -- must be in the base template.
+**Phase to address:** Ongoing throughout all phases. Document this in developer notes.
 
 ---
 
-## Technical Debt Patterns
+### Pitfall 6: `max-width: 680px` Constraint Prevents Bento Grid From Working
 
-Shortcuts that seem reasonable but create long-term problems.
+**What goes wrong:** The current `.page-wrapper` has `max-width: var(--max-width)` where `--max-width: 680px`. A bento grid with 3-4 columns of meaningful tiles needs at least 900-1200px. At 680px, you can fit at most 2 narrow columns, defeating the visual impact of bento. The grid either looks cramped or the constraint forces a boring 1-2 column layout.
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Hardcoding text in templates instead of using i18n strings | Faster initial development | Adding a third language requires editing every template | Never for a multilingual site, even with only 2 languages |
-| Using `relativeURLs = true` | Avoids baseURL issues locally | Breaks multilingual URL resolution, produces broken relative URLs with language prefixes | Never with multilingual Hugo |
-| Skipping `static/CNAME` and setting domain via GitHub UI | One less file to manage | Domain detaches on every deployment | Never |
-| Inlining all CSS rather than using Hugo Pipes | Simpler build | No minification, no cache-busting fingerprinting | Acceptable only if CSS is under ~2KB total |
-| Putting translations in filename suffixes (`.it.md`, `.en.md`) instead of content directories | Fewer directories | Harder to manage as content grows; file list becomes cluttered | Acceptable for a very small site (3-5 pages) like this project |
+**Why it happens:** The 680px max-width was correct for the current text-focused card list layout (optimal reading width). Developers start adding grid CSS without updating the container width, then wonder why tiles are too small.
 
-## Integration Gotchas
+**Consequences:** Bento tiles are squished. Text overflows or gets too small. The layout looks worse than the original because it's trying to be a grid in too little space.
 
-Common mistakes when connecting to external services.
+**Prevention:**
+1. **Increase `--max-width` to 1100-1200px** for the bento container, or remove it entirely and use the grid's own column sizing.
+2. **Consider a full-bleed bento grid** that uses viewport width with padding, independent of the page-wrapper constraint.
+3. **Keep narrow max-width for text-only sections** (hero title, tagline) while allowing the grid to go wider. This means either separate containers or using CSS Grid itself to create narrow-center and wide-grid zones.
 
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| GitHub Pages deployment | Using `peaceiris/actions-gh-pages` (deploys to gh-pages branch) instead of the official `actions/deploy-pages` workflow | Use the official Hugo starter workflow from `actions/starter-workflows/pages/hugo.yml` which deploys via GitHub's artifact-based Pages pipeline |
-| GitHub Pages + Custom Domain | Setting custom domain in GitHub UI only (no `static/CNAME`) | Always place CNAME in `static/` directory of Hugo source |
-| DNS (apex + www) | Creating only A records for apex, forgetting CNAME for www | Configure both: A records for apex domain AND CNAME record for www subdomain pointing to `username.github.io` |
-| Hugo theme as Git submodule | Running `git clone` for the theme instead of `git submodule add` | Use `git submodule add` so the GitHub Actions checkout step with `submodules: true` fetches it correctly |
-| Hugo theme as module | Not including Go installation in GitHub Actions workflow | Add Go setup step before Hugo build if using Hugo Modules |
+**Detection:** Grid tiles narrower than ~200px each. Cards feel cramped compared to reference bento designs.
 
-## Performance Traps
+**Phase to address:** Phase 1 (layout token changes). Must be updated before grid CSS is written.
 
-Patterns that work at small scale but fail as usage grows.
+---
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Large unoptimized images in `static/` | Slow page load, poor Lighthouse score | Use Hugo's image processing (`resources.Get` + `.Resize`) or pre-optimize images before committing | Immediately visible with images > 200KB |
-| Loading full Google Fonts stylesheet | Render-blocking CSS, FOUT/FOIT | Self-host only the font weights/subsets needed, use `font-display: swap` | Noticeable on slow connections or mobile |
-| No HTML/CSS minification | Larger payload than necessary | Use `hugo --minify` in the build command | Marginal for a small landing page, but free to enable |
+### Pitfall 7: Grid Template Areas Maintenance Burden Across 3+ Breakpoints
 
-## Security Mistakes
+**What goes wrong:** `grid-template-areas` is readable and powerful, but each breakpoint needs a complete redefinition of the area map. For 3 breakpoints (mobile, tablet, desktop) with 6+ named areas, that's 3 complete ASCII-art grids to maintain. Adding a new project card means updating all 3 area maps. Forgetting one produces a broken layout at that breakpoint.
 
-Domain-specific security issues beyond general web security.
+**Why it happens:** Developers love `grid-template-areas` for its visual clarity and use it for everything. It works beautifully for static layouts. But a landing page that may add/remove projects needs a grid system that adapts to content count.
 
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| Wildcard DNS record (`*.toto-castaldi.com`) | Domain takeover: anyone can claim subdomains via GitHub Pages | Only create specific DNS records (A for apex, CNAME for www) |
-| Not enforcing HTTPS | Mixed content, credential interception, SEO penalty | Enable "Enforce HTTPS" in GitHub Pages settings after certificate provisioning |
-| Exposing draft/future content | Publishing content marked `draft: true` if build flags are wrong | Never use `hugo -D` in production workflow; review build command in GitHub Actions |
+**Prevention:**
+1. **Use `grid-template-areas` only for the macro layout** (header zone, grid zone, footer zone). Use auto-placement (`grid-auto-flow: dense`) for the project cards themselves.
+2. **For project cards specifically,** use `grid-column: span 2` / `span 1` modifiers on individual cards rather than defining named areas for each card. This scales to any number of cards.
+3. **If using named areas for cards,** add a comment block above each `@media` rule listing which areas exist and what they map to. Make the 3 grid maps visually aligned in the source code so differences are obvious.
 
-## UX Pitfalls
+**Detection:** Adding a 4th project requires editing CSS in multiple places. Layout breaks at one specific viewport width.
 
-Common user experience mistakes in this domain.
+**Phase to address:** Phase 1 (grid architecture decision). Choose the grid strategy before writing CSS.
 
-| Pitfall | User Impact | Better Approach |
-|---------|-------------|-----------------|
-| Language switcher links to homepage instead of translated page | User loses context, must re-navigate | Use `.Translations` to link to the equivalent translated page: `{{ range .Translations }}<a href="{{ .Permalink }}">{{ .Language.LanguageName }}</a>{{ end }}` |
-| No visual indicator of current language | User unsure which language they're viewing | Highlight the active language in the switcher; set `lang` attribute on `<html>` tag |
-| Root URL (`/`) shows a meta-refresh redirect page | Flash of redirect page content, poor first impression | When using `defaultContentLanguageInSubdir = true`, create a custom `layouts/index.redir` or use JavaScript-based instant redirect on the root index |
-| 404 page always in default language | Italian user hitting a broken English link sees Italian 404 | GitHub Pages only serves root `/404.html`. Use a single 404 template with JS to detect URL path (`/en/` vs `/it/`) and display appropriate language content |
-| No `lang` attribute on `<html>` tag | Screen readers announce content in wrong language; SEO impact | Use `<html lang="{{ .Site.Language.Lang }}">` in `baseof.html` |
+---
 
-## "Looks Done But Isn't" Checklist
+### Pitfall 8: Dark Mode Toggle State Lost on Language Switch
 
-Things that appear complete but are missing critical pieces.
+**What goes wrong:** User toggles dark mode on the Italian page, then clicks the language switcher to English. The page reloads (Hugo generates separate HTML per language). The checkbox resets to unchecked. User is back in the default theme, losing their preference. This is an EXISTING limitation of the checkbox hack but becomes more noticeable with a visual redesign that draws attention to the toggle.
 
-- [ ] **Custom domain:** CNAME file exists in `static/CNAME`, not just in GitHub Settings UI -- verify it survives a fresh deployment
-- [ ] **HTTPS:** "Enforce HTTPS" is checked AND the certificate covers both `toto-castaldi.com` and `www.toto-castaldi.com` -- visit both URLs in browser
-- [ ] **hreflang tags:** Every page includes reciprocal hreflang tags for ALL languages plus `x-default` -- view page source of every template type
-- [ ] **Canonical URLs:** Each page has a `<link rel="canonical">` pointing to itself (not cross-language) -- check both IT and EN pages
-- [ ] **Language switcher:** Links to the translated equivalent of the current page, not just the other language's homepage -- test on every page type
-- [ ] **baseURL trailing slash:** `baseURL` ends with `/` in `hugo.toml` -- verify all asset paths work on deployed site, not just localhost
-- [ ] **i18n strings:** All UI text (button labels, navigation, footer) uses `{{ i18n "key" }}`, not hardcoded strings -- check by switching languages
-- [ ] **404 page:** Custom 404.html exists at root level and handles both languages -- visit a non-existent URL under both `/it/` and `/en/`
-- [ ] **Open Graph / meta tags:** `og:locale` and `og:locale:alternate` are set correctly per language -- use a social media debugger tool
-- [ ] **Sitemap:** Multilingual sitemap includes all language versions with correct URLs -- fetch `/sitemap.xml` on deployed site
+**Why it happens:** CSS-only checkbox state lives in the DOM. Page navigation = new DOM = lost state. This is fundamental to the zero-JS constraint. There is no CSS mechanism to persist state across page loads.
 
-## Recovery Strategies
+**Consequences:** Users who manually toggle theme must re-toggle on every page navigation. With only 2 pages (IT/EN) this is tolerable but annoying. It contradicts user expectations -- every other dark mode toggle they've used persists.
 
-When pitfalls occur despite prevention, how to recover.
+**Prevention:**
+1. **Accept this as a known limitation of zero-JS** and document it. The OS preference still works correctly -- only the manual override is lost.
+2. **If this becomes a real user complaint,** the fix requires minimal JS: `localStorage.setItem('theme', 'dark')` on toggle, `localStorage.getItem('theme')` on page load to set checkbox state. This breaks the zero-JS constraint but is ~5 lines of progressive enhancement.
+3. **Do NOT try to solve this with CSS-only hacks** (cookie-based tricks, iframe persistence). They all have worse UX than the reload problem.
+4. **Consider `:has()` migration.** It doesn't solve persistence but simplifies the CSS structure, making a future JS enhancement easier to add.
 
-| Pitfall | Recovery Cost | Recovery Steps |
-|---------|---------------|----------------|
-| CNAME lost on deployment | LOW | Add `static/CNAME`, push, re-enable HTTPS in GitHub settings. Wait up to 24h for cert. |
-| baseURL wrong (broken assets) | LOW | Fix `baseURL` in `hugo.toml`, push. Instant fix after deployment completes. |
-| defaultContentLanguageInSubdir changed mid-project | MEDIUM | Update config, rebuild. All URLs change -- update any external links, resubmit sitemap to search engines, add redirects via aliases if old URLs were indexed. |
-| hreflang tags missing/wrong | LOW | Add/fix the partial template, push. Google re-crawls within days, but full re-indexing takes weeks. |
-| DNS misconfigured | MEDIUM | Fix DNS records. Propagation takes up to 24h. HTTPS cert may need to be re-provisioned (disable then re-enable custom domain in GitHub settings). |
-| Domain takeover via wildcard DNS | HIGH | Remove wildcard record immediately. Contact GitHub support if another site claimed your subdomain. Audit all DNS records. |
+**Detection:** Toggle dark mode, click language switch, observe theme resets.
 
-## Pitfall-to-Phase Mapping
+**Phase to address:** Phase 1 (decide whether to accept or fix). If accepting, document. If fixing, add minimal JS as progressive enhancement.
 
-How roadmap phases should address these pitfalls.
+---
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| CNAME file wiped on deployment | Phase 1: Project scaffolding | After first GitHub Pages deployment, verify custom domain persists in Settings |
-| baseURL mismatch | Phase 1: Project scaffolding | Visit deployed site, confirm CSS/JS loads, check browser console for 404s |
-| defaultContentLanguageInSubdir decision | Phase 1: Project scaffolding | Verify `/it/` and `/en/` both resolve; verify language switcher URL symmetry |
-| DNS order-of-operations | Phase 1: Infrastructure setup | `dig` the domain, visit both apex and www, verify HTTPS padlock |
-| hreflang tags | Phase 2: Multilingual templates | View source of deployed pages, check for reciprocal hreflang + x-default |
-| Language switcher links wrong page | Phase 2: Multilingual templates | Click language switcher on every page type, verify URL changes but content context preserved |
-| Hardcoded strings instead of i18n | Phase 2: Multilingual content | Switch language, verify all UI text changes (not just content) |
-| Missing canonical URLs | Phase 2: SEO setup | Check page source for `<link rel="canonical">` on every page |
-| 404 page single-language | Phase 2: Multilingual templates | Visit non-existent URLs under both language prefixes |
-| Asset optimization | Phase 3: Polish/optimization | Run Lighthouse, verify image sizes and font loading strategy |
+### Pitfall 9: Card Link Overlay (`::after` Trick) Conflicts with Bento Grid Item Sizing
+
+**What goes wrong:** The current `.card-link::after { position: absolute; inset: 0; }` makes the entire card clickable by stretching an invisible overlay. This works because `.project-card` has `position: relative`. In a bento grid, if cards use `grid-column: span 2` or `grid-row: span 2`, the `::after` overlay may not cover the full visual card area if the card's `position: relative` context doesn't match the grid cell dimensions (e.g., when padding or gap creates discrepancies).
+
+**Why it happens:** The overlay sizes itself to the card's padding box. If grid gap is outside the card (between cards), this works fine. But if developers add inner grid structures to cards (sub-grids for card content), the `::after` position context can shift.
+
+**Prevention:**
+1. **Keep `.project-card { position: relative }` and ensure `::after` uses `inset: 0`** -- this should work as-is if the card is the direct grid item.
+2. **Test click targets after grid implementation.** Click the edges and corners of each card, especially spanning cards.
+3. **If cards get an inner layout (sub-grid for icon/title/description),** ensure the `::after` is on an element that's a direct child of the `position: relative` container, not nested deeper.
+
+**Detection:** Clicking near the edge of a bento card doesn't navigate. Gap between cards is not clickable (expected) but edge of card should be.
+
+**Phase to address:** Phase 2 (card component implementation). Test after styling each card variant.
+
+---
+
+## Minor Pitfalls
+
+### Pitfall 10: Fluid Typography Clamp Values Don't Scale With Wider Viewport
+
+**What goes wrong:** Current `clamp()` values (e.g., `--font-size-xl: clamp(1.73rem, 0.59vw + 1.57rem, 2.07rem)`) were tuned for a 680px max-width container. At 1200px bento width, text may still be at the clamp maximum (2.07rem) when it should scale larger to fill bigger tiles. Bento hero tiles with large headings look undersized.
+
+**Prevention:** Re-calculate clamp values for the new max viewport target. Use a tool like utopia.fyi to generate a new fluid type scale for the wider layout.
+
+**Phase to address:** Phase 2 (typography refinement).
+
+---
+
+### Pitfall 11: External Logo Images Break Bento Tile Aspect Ratios
+
+**What goes wrong:** Project logos are loaded from external subdomains (e.g., `https://docora.toto-castaldi.com/images/logo.svg`). If these SVGs lack `viewBox` attributes or have fixed `width`/`height`, they won't scale properly within bento tiles that vary in size. A logo that's 48x48 in the current layout may need to be 64x64 or 96x96 in a larger bento tile.
+
+**Prevention:** Ensure SVG logos have `viewBox` and no fixed `width`/`height` attributes. Use CSS `width: 100%; height: auto; max-width: [size]` rather than fixed pixel dimensions.
+
+**Phase to address:** Phase 2 (card component styling).
+
+---
+
+### Pitfall 12: `prefers-color-scheme` Media Query Duplication Across Grid-Specific Styles
+
+**What goes wrong:** The current CSS already duplicates dark mode tokens in 4 places (`:root`, `.page-wrapper`, `#dark-toggle:checked + .page-wrapper`, and `@media dark + #dark-toggle:checked`). Adding bento-grid-specific dark mode styles (e.g., tile accent colors, grid borders) means adding rules to all 4 blocks. Missing one block means the feature works in 3 of 4 theme states but breaks in the 4th.
+
+**Prevention:**
+1. **Migrate to `:has()` selector** to reduce the 4 blocks to 2 (light defaults + dark override via `:has(#dark-toggle:checked)` or `prefers-color-scheme`).
+2. **If keeping checkbox hack,** use CSS custom properties exclusively. Never use hardcoded color values in component styles. Every color reference must go through `var(--color-*)` tokens so the 4 toggle blocks control everything.
+3. **Add a "theme state matrix" comment** at the top of the CSS listing all 4 states and which CSS block handles each.
+
+**Detection:** Feature looks correct in OS-dark mode but wrong when manually toggled to dark, or vice versa. Must test all 4 combinations: OS-light + unchecked, OS-light + checked, OS-dark + unchecked, OS-dark + checked.
+
+**Phase to address:** Phase 1 (theme architecture). Decide on `:has()` migration before adding any new theme tokens.
+
+---
+
+## Phase-Specific Warnings
+
+| Phase Topic | Likely Pitfall | Mitigation |
+|-------------|---------------|------------|
+| HTML restructuring for grid | Dark mode sibling selector breaks (#1) | Comment the constraint or migrate to `:has()` first |
+| Grid area design | Source order mismatch (#2) | Write HTML in reading order, then map visually with areas |
+| Design tokens | Contrast failure in one theme (#3) | Audit every token pair in both themes before coding |
+| Responsive grid | Mobile bento collapse (#4) | Design mobile 2-col minimum, not single-col fallback |
+| Container width | 680px too narrow for grid (#6) | Update `--max-width` before writing grid CSS |
+| Breakpoint grid areas | Maintenance burden (#7) | Use auto-placement for cards, named areas only for macro layout |
+| Language switch | Theme state lost (#8) | Accept as known limitation or add 5 lines of progressive JS |
+| Card interactivity | Click overlay mismatch (#9) | Test click targets on all card size variants |
+| New color tokens | 4-way theme duplication (#12) | Migrate to `:has()` or strictly use `var()` tokens only |
+
+## Integration Risks (Existing Features That Break During Redesign)
+
+| Existing Feature | How It Could Break | Prevention |
+|------------------|-------------------|------------|
+| Language switcher position | Moves from `site-header` flex layout to grid layout; may lose right-alignment or overlap with toggle | Keep header as flex container inside the grid, or explicitly place it in a grid area |
+| `card-link::after` overlay | Position context shifts in grid items | Verify `.project-card` remains `position: relative` and is the direct grid item |
+| Hugo `resources.Fingerprint` | CSS changes appear not to work during development | Hard-refresh; don't remove fingerprinting |
+| `.page-wrapper` as dark mode target | Any structural change between checkbox and wrapper kills dark mode | Lock DOM relationship or migrate to `:has()` |
+| `hreflang` / SEO partials | No risk from CSS changes; these are in `<head>` and won't be affected by layout changes | No action needed -- but verify after deployment |
+| `aria-label` on project cards section | If grid restructuring moves the `<section>` or changes its role, screen readers lose context | Keep `aria-label` on the grid container |
+
+## Testing Matrix (Must-Pass for Each Phase)
+
+Every pull request during the redesign should verify:
+
+| Test | Method | All 4 theme states? |
+|------|--------|---------------------|
+| Dark mode toggle works | Click toggle, observe theme change | Yes: OS-light+unchecked, OS-light+checked, OS-dark+unchecked, OS-dark+checked |
+| Language switch preserves page | Click IT/EN, verify correct URL and content | Both languages |
+| Cards are clickable | Click each card, verify navigation | All cards in both themes |
+| Keyboard navigation logical | Tab through page, verify focus order | Visual order matches tab order |
+| Text contrast passes AA | Lighthouse or axe audit | Both light and dark themes |
+| Mobile layout has visual hierarchy | View at 375px viewport width | Cards should NOT all be identical width |
+| No horizontal scroll | View at 320px minimum | Both orientations |
+| Logos render at correct size | Visual check in each card variant | Spanning and non-spanning cards |
 
 ## Sources
 
-- [Hugo: Host on GitHub Pages (official docs)](https://gohugo.io/host-and-deploy/host-on-github-pages/) -- HIGH confidence
-- [Hugo: Configure Languages (official docs)](https://gohugo.io/configuration/languages/) -- HIGH confidence
-- [Hugo: Multilingual Content Management (official docs)](https://gohugo.io/content-management/multilingual/) -- HIGH confidence
-- [Hugo: URL Management (official docs)](https://gohugo.io/content-management/urls/) -- HIGH confidence
-- [GitHub Pages: Managing Custom Domains (official docs)](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site) -- HIGH confidence
-- [GitHub Pages: Securing with HTTPS (official docs)](https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https) -- HIGH confidence
-- [GitHub Pages: Custom 404 pages (official docs)](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-custom-404-page-for-your-github-pages-site) -- HIGH confidence
-- [GitHub Actions starter workflow for Hugo](https://github.com/actions/starter-workflows/blob/main/pages/hugo.yml) -- HIGH confidence
-- [Hugo Discourse: CNAME reset on deployment](https://github.com/orgs/community/discussions/22366) -- MEDIUM confidence
-- [Hugo Discourse: defaultContentLanguageInSubdir gotchas](https://discourse.gohugo.io/t/defaultcontentlanguageinsubdir/4658) -- MEDIUM confidence
-- [Hugo Discourse: Custom 404 per language](https://discourse.gohugo.io/t/custom-404-per-language/20239) -- MEDIUM confidence
-- [Hugo Discourse: relativeURLs breaks multilingual](https://discourse.gohugo.io/t/relativeurls-true-with-multilingual-websites-produces-broken-relative-urls/28732) -- MEDIUM confidence
-- [Hugo Issue #5898: Redirects for defaultContentLanguage sections](https://github.com/gohugoio/hugo/issues/5898) -- HIGH confidence
-- [Multilingual SEO with Hugo (Glukhov, 2025)](https://www.glukhov.org/post/2025/10/multi-language-website-seo-with-hugo/) -- MEDIUM confidence
-- [hreflang implementation on Hugo sites (Wieckiewicz)](https://dariusz.wieckiewicz.org/en/setting-hreflang-and-x-default-on-multilingual-site-part-2/) -- MEDIUM confidence
+- [MDN: CSS Grid Layout and Accessibility](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Grid_layout_and_accessibility) -- HIGH confidence
+- [MDN: :has() CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:has) -- HIGH confidence
+- [MDN: prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) -- HIGH confidence
+- [WebAIM: Contrast and Color Accessibility](https://webaim.org/articles/contrast/) -- HIGH confidence
+- [BOIA: Dark Mode Doesn't Satisfy WCAG Contrast](https://www.boia.org/blog/offering-a-dark-mode-doesnt-satisfy-wcag-color-contrast-requirements) -- MEDIUM confidence
+- [CSS-Tricks: Grid Content Re-ordering and Accessibility](https://css-tricks.com/grid-content-re-ordering-and-accessibility/) -- MEDIUM confidence
+- [kleinfreund.de: CSS-only Dark Mode](https://kleinfreund.de/css-only-dark-mode/) -- MEDIUM confidence
+- [inkbotdesign.com: Bento Grid Design 2026](https://inkbotdesign.com/bento-grid-design/) -- MEDIUM confidence
+- [iamsteve.me: Build a Bento Layout with CSS Grid](https://iamsteve.me/blog/bento-layout-css-grid) -- MEDIUM confidence
+- [wearedevelopers.com: Building Bento Grid with Modern CSS Grid](https://www.wearedevelopers.com/en/magazine/682/building-a-bento-grid-layout-with-modern-css-grid-682) -- MEDIUM confidence
+- [johnjago.com: Hugo Detecting CSS Changes but Not Rendering](https://johnjago.com/hugo-css-mystery/) -- MEDIUM confidence
+- [W3C WCAG Issue #2889: Dark Mode and Contrast](https://github.com/w3c/wcag/issues/2889) -- HIGH confidence
+- Codebase analysis of `/home/toto/scm-projects/toto-castaldi/assets/css/main.css` (lines 78-101, 280-287) -- HIGH confidence
+- Codebase analysis of `/home/toto/scm-projects/toto-castaldi/layouts/_default/baseof.html` -- HIGH confidence
 
 ---
-*Pitfalls research for: Hugo multilingual landing page on GitHub Pages*
-*Researched: 2026-02-17*
+*Pitfalls research for: Bento grid redesign + dark/light theme overhaul*
+*Researched: 2026-02-19*

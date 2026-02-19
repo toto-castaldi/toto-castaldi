@@ -1,218 +1,201 @@
 # Project Research Summary
 
-**Project:** toto-castaldi.com
-**Domain:** Multilingual static landing page (Hugo + GitHub Pages)
-**Researched:** 2026-02-17
+**Project:** toto-castaldi.com v1.1 Bento Grid Restyling
+**Domain:** Hugo static landing page — CSS layout redesign and accessibility overhaul
+**Researched:** 2026-02-19
 **Confidence:** HIGH
 
 ## Executive Summary
 
-This is a minimal multilingual developer project showcase: a single-page static site listing three software projects (Docora, Lumio, Helix) in Italian and English, hosted on GitHub Pages at a custom domain. The expert approach for this type of site is Hugo (extended edition) with its built-in i18n system, deployed via GitHub Actions. No Node.js, no JavaScript frameworks, no external theme — Hugo handles SCSS transpilation, minification, and fingerprinting natively through Hugo Pipes, making the entire build pipeline dependency-free except for Hugo itself and Dart Sass.
+This milestone is a pure CSS/template redesign of an existing production Hugo site. No infrastructure changes are needed: Hugo Extended 0.155.3, GitHub Actions, and GitHub Pages all stay as-is. The redesign has two inseparable goals — replace the single-column project card list with a 3-column bento grid, and fix the existing WCAG AA contrast failures (border contrast fails at 1.24:1 in light mode and 1.72:1 in dark mode; both require a minimum of 3:1 for UI components per WCAG 2.1 SC 1.4.11). These two goals must be addressed together because fixing color tokens is a prerequisite for all visual polish work.
 
-The recommended approach is a lean, inline-layout structure: write ~150 lines of HTML templates directly in `layouts/`, define projects as structured data in `data/projects.toml`, translate UI strings via `i18n/en.toml` and `i18n/it.toml`, and translate page content via filename-suffixed Markdown files (`_index.en.md`, `_index.it.md`). This eliminates theme overhead, git submodule fragility, and Go module complexity. The entire site builds in milliseconds and delivers sub-1-second page loads with zero JavaScript at runtime.
+The recommended approach is conservative and deliberate: widen the page container from 680px to 1080px, implement CSS Grid with `grid-template-columns: repeat(3, 1fr)` and media-query-driven breakpoints at 768px (2-col tablet) and 480px (1-col mobile), and fix design tokens before touching templates. The existing CSS-only checkbox-hack dark mode toggle is kept intact (100% browser support, already working). The critical architectural risk is that any DOM restructuring can silently break the `#dark-toggle:checked + .page-wrapper` adjacent-sibling selector. One notable disagreement between research files: ARCHITECTURE.md recommends staying with plain CSS while STACK.md recommends migrating to SCSS. This summary resolves the disagreement in favor of plain CSS — the CSS file will be under 500 lines after the rewrite, CSS custom properties provide the token system, and adding Dart Sass processing is premature at this scale.
 
-The key risks are infrastructure-level and must be addressed in Phase 1 before any content work begins: `baseURL` must include a trailing slash in `hugo.toml`, `defaultContentLanguageInSubdir` must be set intentionally before content is created (changing it later rewrites all URLs), the `static/CNAME` file must exist in source (not just GitHub UI), and DNS records must be configured in the correct order to avoid domain takeover risk and HTTPS certificate failure. Multilingual SEO (hreflang tags, canonical URLs, Open Graph) is well-understood and easy to implement once the foundation is correct.
+The main risks are the dark mode toggle breaking during HTML restructuring (silent failure, easy to miss in testing), contrast failures being introduced by new bento color tokens if not audited in all 4 theme states (OS-light/dark x toggle-checked/unchecked), and mobile collapse producing a boring identical-card stack that defeats the bento aesthetic. All three risks have clear preventive patterns documented in the research. No external dependencies or new infrastructure are required — the entire redesign is HTML and CSS.
 
 ## Key Findings
 
 ### Recommended Stack
 
-Hugo extended edition v0.155.3 with Dart Sass 1.97.3 is the correct stack, deployed via the official GitHub Actions workflow. LibSass was deprecated in Hugo v0.153.0 — extended edition with Dart Sass is the only supported path for SCSS. No npm, no Webpack, no Tailwind: Hugo Pipes handles everything. The config format is TOML (`hugo.toml`), which is Hugo's default and has the most community documentation.
-
-See `.planning/research/STACK.md` for full details.
+The current stack requires no changes at the infrastructure level. Hugo Extended 0.155.3 with Dart Sass already installed in CI is the complete build environment. Dart Sass is present but currently unused — both STACK.md and ARCHITECTURE.md address whether to activate it, reaching opposite conclusions. This summary resolves the disagreement: stay with plain CSS.
 
 **Core technologies:**
-- **Hugo extended v0.155.3**: Static site generator — built-in multilingual i18n, asset pipeline (Hugo Pipes), millisecond build times, no external dependencies
-- **Dart Sass 1.97.3**: SCSS transpilation — official replacement for deprecated LibSass; required for SCSS support in Hugo extended
-- **GitHub Actions**: CI/CD — official Hugo starter workflow handles build + deploy with zero configuration after setup
-- **GitHub Pages**: Hosting — free, custom domain support, automatic HTTPS via Let's Encrypt
-- **Custom SCSS (no framework)**: Styling — hand-written SCSS under 100 lines is the right fit; Tailwind/Bootstrap are overkill for 3 cards
-- **System font stack**: Typography — zero network requests, GDPR-compliant, native feel on every device
+- Hugo Extended 0.155.3: static site generation and Hugo Pipes asset processing — keep as-is, zero changes needed
+- Plain CSS (`assets/css/main.css`): CSS Grid, custom properties, checkbox-hack dark mode — rewrite in-place, no SCSS migration
+- CSS Grid Level 1 (97%+ browser support): bento layout via `grid-template-columns` — primary new technique
+- `color-scheme: light dark` CSS property (96%+ support): browser-level dark/light awareness — add to `:root`, single line of significant visual polish
+- GitHub Actions + GitHub Pages: CI/CD and hosting — no changes
+
+**Rejected technologies (with rationale):**
+- SCSS migration: premature at under 500 lines; CSS custom properties already provide token system; native CSS nesting at 91% support handles any nesting needs
+- CSS Subgrid: no nested grids in this layout; 87.8% support is below threshold
+- Container Queries: single-page with one grid context; media queries are sufficient and simpler
+- `light-dark()` CSS function: cannot combine with checkbox toggle (only responds to OS preference); 85% support, not yet Baseline Widely Available
+- JavaScript dark mode: violates zero-JS project constraint
 
 ### Expected Features
 
-Research distinguishes clearly between P1 (launch blockers), P2 (post-launch polish), and P3 (future consideration). The boundary is clean: everything needed for a functional bilingual site with visible projects is P1; everything that improves SEO and social sharing is P2; everything else is P3 or anti-feature.
+The redesign has a clear must-have/should-have/defer split. All must-have features are pure CSS changes with no HTML rewrites beyond class additions.
 
-See `.planning/research/FEATURES.md` for full details.
+**Must have (table stakes):**
+- 3-column desktop bento grid — the entire point of v1.1; CSS Grid `repeat(3, 1fr)` on the existing project cards container
+- Responsive collapse: 3-col desktop → 2-col tablet (≥768px) → 1-col mobile (≤480px)
+- Wider page container: `--max-width` from 680px to 1080px — gating change; without this the grid is cramped at ~200px per column
+- WCAG AA contrast fix: border contrast (light 1.24:1, dark 1.72:1) must reach 3:1; muted text improved in light mode
+- Cards visually distinct from background: card-bg differentiated from page-bg in light mode (currently identical at #ffffff)
 
-**Must have (table stakes / P1 — the site is broken without these):**
-- Project cards (name, description, link) for Docora, Lumio, Helix — this IS the product
-- Hugo multilingual setup (IT/EN) with i18n string files — foundational, all other features depend on it
-- Language switcher in header (text-based, not flags) — bilingual visitors expect it
-- Responsive layout — ~83% of traffic is mobile
-- Semantic HTML with proper heading hierarchy and `lang` attribute — screen readers, SEO, correctness
-- Favicon (SVG with dark mode support) — missing favicon looks unfinished
-- Proper `<title>` and meta description per language — search engine baseline
-- HTTPS via GitHub Pages — non-negotiable
+**Should have (differentiators):**
+- Rounded corners increased to 12-16px — signature bento aesthetic; current 8px is too subtle
+- Layered box-shadow for depth — CSS variables, theme-aware values per mode; layered approach avoids dated flat-shadow look
+- Card hover elevation (`transform: translateY(-2px)` + shadow increase) — interactive tactile feel without JavaScript
+- `prefers-reduced-motion` media query — accessibility; currently missing from the site entirely
+- `color-scheme: light dark` on `:root` — native form controls and scrollbars adapt to theme automatically
 
-**Should have (competitive differentiators / P2 — add after initial deploy):**
-- hreflang tags — multilingual SEO; Google needs these to show the right language version
-- Open Graph meta tags — rich previews when URL is shared on LinkedIn, Slack, etc.
-- Canonical URLs per language — prevents duplicate content SEO penalty
-- Dark mode (CSS `prefers-color-scheme` only, no JS toggle) — respects OS preference, signals craft
-- WCAG AA contrast audit — verify after final color palette
-- Intentional typography scale via CSS custom properties
+**Defer to future milestone:**
+- Extra bento sections (tech stack, GitHub stats) — scope creep for v1.1; ship 3-card grid first
+- Variable-size bento tiles (2x1, 1x2 spans) — creates false hierarchy with 3 equal-weight projects
+- Per-project accent color strips on card borders — optional; adds complexity; evaluate after seeing live layout
+- CSS-only dark mode persistence across page navigation — requires JS; accept as known limitation
 
-**Defer (v2+ / P3 — only if specific need arises):**
-- OG image (requires graphic design effort)
-- Structured data / JSON-LD
-- Goatcounter analytics (only if traffic measurement needed)
-- Additional projects beyond initial three
-
-**Anti-features (deliberately excluded):**
-- About/bio section, contact form, blog, JS animations, dark mode toggle, social media links, cookie banner, auto-language-detect, project detail pages
+**Anti-features to explicitly avoid:**
+- `grid-auto-flow: dense` — reorders DOM vs visual order, WCAG 1.3.2 accessibility violation
+- Glassmorphism / `backdrop-filter` — contrast calculation complexity, performance cost, trend that ages poorly
+- JavaScript card animations — violates zero-JS constraint
+- Icon fonts or external icon libraries — unnecessary dependency
 
 ### Architecture Approach
 
-The architecture is a pure static site generator pattern: Hugo compiles templates + content + data into flat HTML/CSS files; GitHub Pages serves those files. There is no server, no database, no API. The "backend" is the build step. Six components handle all concerns with clean separation: config (TOML files), content (Markdown with language suffixes), i18n strings (TOML key-value files), layouts (Hugo templates), assets (SCSS through Hugo Pipes), and structured data (`data/projects.toml`).
-
-See `.planning/research/ARCHITECTURE.md` for full directory structure, component diagrams, and pattern examples.
+The redesign modifies 3 existing files and adds no new ones. `assets/css/main.css` is rewritten with a new section structure. `layouts/_default/baseof.html` gains a `class="bento-grid"` attribute on `<main>`. `layouts/index.html` restructures the page into bento cells (hero section + 3 project cards as direct grid children, eliminating the now-redundant `.project-cards` wrapper). The dark mode toggle's DOM relationship — `#dark-toggle` as direct sibling of `.page-wrapper` — is the hardest architectural constraint and must be preserved throughout all changes.
 
 **Major components:**
-1. **`config/_default/`** — site metadata, language definitions, menu structures (split TOML files by concern)
-2. **`content/`** — page content (`_index.en.md`, `_index.it.md`); filename-suffix translation method
-3. **`i18n/`** — UI string translations (`en.toml`, `it.toml`); all button labels, nav text, headings
-4. **`data/projects.toml`** — structured project data iterated by template; separates data from presentation
-5. **`layouts/`** — HTML templates: `baseof.html` (shell), `index.html` (home), 5 partials (head, header, project-card, language-switcher, footer)
-6. **`assets/css/main.css`** — SCSS processed through Hugo Pipes (minify + fingerprint for cache busting)
-7. **`.github/workflows/hugo.yaml`** — CI/CD; official Hugo starter workflow
+1. Design Tokens (`main.css`, `:root` and `.page-wrapper` blocks) — color, spacing, breakpoints; theme-switching via 4 CSS blocks (light default, dark OS preference, toggle-to-dark override, toggle-back-to-light override)
+2. Bento Grid System (`main.css`, `.bento-grid` and `.bento-cell` variants) — CSS Grid layout with `repeat(3, 1fr)` columns and 3 responsive breakpoints
+3. Project Card Component (`main.css`, `.bento-project`) — card surface, hover effects, `::after` click overlay (already implemented; must be preserved)
+4. Dark Mode Toggle Architecture (checkbox `#dark-toggle` + adjacent sibling `+` combinator to `.page-wrapper`) — 4-block CSS structure handling all theme state combinations
+5. Hugo Templates (`baseof.html` class change, `index.html` restructure) — minimal changes; data flow from `projects.toml` unchanged
+
+**CSS section order within `main.css`:**
+Reset → Design Tokens light defaults → Design Tokens dark OS preference → Dark Mode Toggle overrides → Base Typography → Page Layout → Bento Grid System → Bento Cell Variants → Project Card → Toggle Button → Utilities
 
 ### Critical Pitfalls
 
-Research identified 5 critical pitfalls, all verifiable against official docs. Four are Day 0 decisions that cannot be corrected cheaply later.
+1. **Dark mode toggle breaks silently during HTML restructuring** — The `#dark-toggle:checked + .page-wrapper` CSS selector requires the checkbox to be the immediate DOM sibling of `.page-wrapper`. Any element inserted between them kills dark mode with no browser error or warning. Prevention: add a `<!-- CRITICAL: #dark-toggle must be immediately before .page-wrapper (CSS + sibling selector) -->` comment in `baseof.html` before touching HTML; test all 4 theme states after every HTML change.
 
-See `.planning/research/PITFALLS.md` for full recovery strategies and verification checklists.
+2. **Border and UI contrast fails WCAG AA in both themes** — Current border contrast: light 1.24:1, dark 1.72:1 (requirement: 3:1 for UI components per WCAG 2.1 SC 1.4.11). This is an existing measured bug, not speculation. Prevention: fix `--color-border` in both themes and add `--color-card-bg` differentiation before writing any grid CSS; validate every new token pair with WCAG relative luminance formula.
 
-1. **CNAME file wiped on every deployment** — place `static/CNAME` containing `toto-castaldi.com` in the Hugo source repo; never rely solely on the GitHub UI setting
-2. **`baseURL` missing trailing slash breaks all asset paths** — set `baseURL = "https://toto-castaldi.com/"` (with trailing slash) before first deployment; the most-reported Hugo + GitHub Pages problem
-3. **`defaultContentLanguageInSubdir` decision not made before content creation** — decide before writing any content; use `true` for symmetric `/it/` and `/en/` URL structure; changing later rewrites all URLs and breaks search indexes
-4. **DNS configuration order causes HTTPS certificate failure or domain takeover risk** — add custom domain in GitHub Settings first, then create DNS records; never use wildcard DNS (`*.toto-castaldi.com`)
-5. **Missing or incorrect hreflang tags** — use `.AllTranslations` in a partial template; always use `.Permalink` (absolute URLs), always include `x-default`, always make references reciprocal; ~75% of hreflang implementations have errors
+3. **`--max-width: 680px` makes the grid cramped before it is even built** — At 680px, 3 grid columns are ~200px each — too narrow for readable card content. Prevention: the very first CSS change must be widening `--max-width` to 1080px; nothing else should proceed until this is confirmed.
+
+4. **Mobile collapse destroys bento visual hierarchy** — Default `grid-template-columns: 1fr` on mobile makes all cards identical rectangles, eliminating the bento aesthetic for 60%+ of visitors. Prevention: implement the 3-breakpoint responsive system from the start; the tablet breakpoint (2-col, with the third project card spanning full width) is the key intermediate step.
+
+5. **New color tokens must be tested in all 4 theme states** — OS-light unchecked, OS-light checked, OS-dark unchecked, OS-dark checked. Adding bento card backgrounds or shadows means adding values to all 4 CSS blocks; missing one causes a feature to break in a specific theme state only, which is easy to miss. Prevention: use `var(--color-*)` tokens exclusively — never hardcoded color values in component styles.
 
 ## Implications for Roadmap
 
-Based on the dependency graph from architecture research and the pitfall-to-phase mapping from pitfalls research, a 4-phase structure is recommended. Architecture research explicitly defines a build order with the same 5 steps; phases below consolidate these into shipping increments.
+The dependency graph across all 4 research files dictates a clear build order: tokens must precede grid CSS, grid CSS must precede template changes, template changes must precede polish. Each step produces a functional intermediate state.
 
-### Phase 1: Foundation and Infrastructure
+### Phase 1: Foundation — Tokens and Container Width
 
-**Rationale:** All other work depends on correct Hugo multilingual configuration. The four most critical pitfalls are Day 0 infrastructure decisions that cannot be changed cheaply later (`baseURL`, `defaultContentLanguageInSubdir`, `static/CNAME`, DNS order). This phase must be complete and deployed before any content or design work begins.
+**Rationale:** Research is unanimous that this must come first. The `--max-width: 680px` constraint is identified in PITFALLS.md (Pitfall 6), FEATURES.md (dependency graph), and ARCHITECTURE.md (Build Order Step 1) as the gating blocker. Contrast fixes must precede all visual work. This phase is non-breaking — the existing single-column layout renders correctly with updated tokens; nothing visually breaks while the tokens are being fixed.
 
-**Delivers:** A deployable blank site at `toto-castaldi.com` with correct multilingual URL structure, HTTPS enforced, and custom domain stable across deployments.
+**Delivers:** Correct WCAG AA contrast in both themes (borders pass 3:1, muted text improved to 7.5:1), proper container width for a 3-column grid, and theme architecture cleanup (`color-scheme: light dark` added, design tokens moved to `.page-wrapper` blocks only, no redundant `:root` dark block).
 
-**Addresses (from FEATURES.md):** HTTPS, proper URL structure for language switcher
+**Addresses:** FEATURES.md table stakes (contrast fixes, card-bg differentiation); Pitfall 3 (contrast failure); Pitfall 6 (680px constraint); Pitfall 12 (4-way theme duplication).
 
-**Implements (from ARCHITECTURE.md):** `config/_default/` (hugo.toml, languages.toml), `baseof.html`, `.github/workflows/hugo.yaml`, `static/CNAME`
+**Specific token changes:**
+- `--max-width`: 680px → 1080px
+- Add `color-scheme: light dark` to `:root`
+- `--color-text-muted` light: #6b7280 → #4b5563 (ratio: 4.83:1 → 7.56:1)
+- `--color-border` light: #e5e7eb → #9ca3af (ratio: 1.24:1 → 3.43:1)
+- `--color-card-bg` light: #ffffff → #f8f9fa (card surface distinct from page background)
+- `--color-border` dark: #374151 → #6b7280 (ratio: 1.72:1 → 3.57:1)
 
-**Avoids (from PITFALLS.md):** CNAME wiped on deployment, baseURL mismatch, defaultContentLanguageInSubdir wrong, DNS order-of-operations
+### Phase 2: Bento Grid CSS
 
-**Research flag:** Standard patterns, well-documented in official Hugo docs — no additional research phase needed.
+**Rationale:** Write and verify grid styles in isolation before touching templates. ARCHITECTURE.md's build order explicitly sequences CSS before templates — grid styles can be validated in browser devtools before being activated in HTML. This separation allows catching CSS bugs without also debugging template changes simultaneously.
 
-### Phase 2: Multilingual Content and Templates
+**Delivers:** Complete CSS grid system with 3 responsive breakpoints, `.bento-cell` shared card styles (border-radius, padding, background), `.bento-hero` (full-width span) and `.bento-project` variants, plus card hover effects and layered shadows.
 
-**Rationale:** With infrastructure in place, build the content layer and all language-aware templates. Hugo i18n is the foundation that language switcher, hreflang, per-language meta, and canonical URLs all depend on — research explicitly notes this dependency chain. The language switcher linking correctly to translated equivalent pages (not just the homepage) is a distinct UX pitfall that must be tested in this phase.
+**Uses:** CSS Grid `grid-template-columns: repeat(3, 1fr)` with `grid-column: 1/-1` for hero span; `@media (max-width: 768px)` for tablet 2-col; `@media (max-width: 480px)` for mobile 1-col; `@media (prefers-reduced-motion: reduce)` to disable all transitions.
 
-**Delivers:** A functional bilingual site with correct content in both IT and EN, language switcher working, all UI strings translated, and multilingual SEO foundations in place.
+**Avoids:** Pitfall 4 (mobile bento collapse) by implementing 3-breakpoint system from the start; Pitfall 7 (grid-template-areas maintenance burden) by using auto-placement for cards and explicit span only for the hero section.
 
-**Addresses (from FEATURES.md):** Hugo i18n setup, language switcher, semantic HTML, `<title>` + meta per language, hreflang tags, canonical URLs
+### Phase 3: Template Restructure
 
-**Implements (from ARCHITECTURE.md):** `content/_index.en.md` + `_index.it.md`, `i18n/en.toml` + `i18n/it.toml`, `index.html` template, `head.html` partial (meta, hreflang, canonical), `header.html` + `language-switcher.html` partials
+**Rationale:** Templates activate the grid. Per ARCHITECTURE.md, this step follows CSS so the grid is immediately visible when HTML changes take effect. This is the highest-risk step due to Pitfall 1 (dark mode toggle) and must be preceded by two stable phases so the codebase is in a confirmed-good state.
 
-**Avoids (from PITFALLS.md):** Hardcoded strings instead of i18n, language switcher linking to homepage instead of translated page, missing hreflang tags, missing canonical URLs, no `lang` attribute on `<html>`
+**Delivers:** Live bento layout. `<main class="bento-grid">` in `baseof.html`. `index.html` restructured into `.bento-cell.bento-hero` (hero section) plus 3x `.bento-cell.bento-project` (project cards) as direct grid children, eliminating the `.project-cards` wrapper. Old `.project-cards` and `.project-card` CSS rules removed.
 
-**Research flag:** Standard Hugo patterns, well-documented — no additional research phase needed.
+**Addresses:** Pitfall 1 (dark mode sibling selector) — add protective comment, test all 4 theme states immediately after each HTML change; Pitfall 2 (source order vs visual order) — write HTML in reading order: hero, Docora, Lumio, Helix; Pitfall 9 (card link `::after` overlay) — keep `position: relative` on `.bento-project` and test click targets at card edges.
 
-### Phase 3: Project Showcase and Visual Design
+### Phase 4: Visual Polish
 
-**Rationale:** With bilingual infrastructure and templates established, add the actual content (project cards) and visual design. Architecture research recommends keeping the project data structure simple (`data/projects.toml` with per-language description fields) for 3 projects — richer content page structure would be overengineering at this scale.
+**Rationale:** Can only be done after seeing the real layout at scale. Layered shadow values, hover transition amounts, border-radius final tuning, and the decision on per-project accent colors all depend on the grid being live and visible at real viewport sizes.
 
-**Delivers:** The complete functional landing page: three project cards (Docora, Lumio, Helix) rendered correctly in both languages, fully styled, responsive, with favicon and dark mode support.
+**Delivers:** Polished bento aesthetic — 12-16px border-radius, layered box-shadow (CSS variables, theme-aware), hover elevation (`translateY(-2px)` + shadow increase), `prefers-reduced-motion` media query. Optionally: per-project accent color on card top border.
 
-**Addresses (from FEATURES.md):** Project cards (name, description, link), responsive layout, favicon, dark mode (CSS only), typography scale, WCAG AA contrast, accessible contrast ratios
-
-**Implements (from ARCHITECTURE.md):** `data/projects.toml`, `project-card.html` partial, `assets/css/main.css` (SCSS via Hugo Pipes), `footer.html` partial, `static/favicon.svg`
-
-**Avoids (from PITFALLS.md):** CSS in `static/` instead of `assets/` (no cache busting), large unoptimized images, no HTML/CSS minification
-
-**Research flag:** CSS architecture and modular type scale are standard patterns — no additional research phase needed. If a specific web font is needed beyond the system stack, self-hosting WOFF2 requires checking Google Fonts license for the chosen typeface.
-
-### Phase 4: Polish and SEO Verification
-
-**Rationale:** After the core site is live and visually complete, verify everything that "looks done but isn't" per the PITFALLS.md checklist. Add P2 features (Open Graph, print stylesheet) and run Lighthouse. This phase is verification-heavy — most work is checking deployed behavior, not writing new code.
-
-**Delivers:** A production-ready site with full multilingual SEO, social sharing previews, accessibility verification, and clean Lighthouse scores.
-
-**Addresses (from FEATURES.md):** Open Graph meta tags, print-friendly stylesheet, WCAG AA contrast audit (verified against deployed site)
-
-**Implements (from ARCHITECTURE.md):** OG meta tags in `head.html` partial, `@media print` CSS block, multilingual 404 page
-
-**Avoids (from PITFALLS.md):** Missing OG locale tags, single-language 404 page, sitemap missing language versions
-
-**Research flag:** Standard patterns — no additional research phase needed. The multilingual 404 page (GitHub Pages only serves one root `/404.html`) requires a small JS-based language detection snippet; this is documented in pitfalls research and is a known workaround.
+**Addresses:** FEATURES.md differentiators — rounded corners, depth, hover tactility, motion sensitivity respect. Pitfall 10 (clamp values tuned for 680px may look undersized in hero tile at 1080px — adjust by eye).
 
 ### Phase Ordering Rationale
 
-- **Infrastructure before content:** The `defaultContentLanguageInSubdir` setting and `baseURL` must be final before any content files are created. Changing URL structure after content exists is a full-project rewrite with SEO consequences.
-- **i18n before features:** Every feature (language switcher, hreflang, per-language meta) depends on Hugo's multilingual configuration being correct. This is the most explicit dependency chain in feature research.
-- **Data structure before templates:** `data/projects.toml` schema should be defined before writing `project-card.html` since the template references specific field names.
-- **Core before polish:** Open Graph and print stylesheet have zero dependencies on each other or on the project cards — they are straightforward additions once the `<head>` partial structure exists.
+- Tokens precede grid because color tokens are referenced by grid component styles; fixing them first means no rework of component colors later.
+- Grid CSS precedes templates because verifying CSS in isolation is faster than debugging CSS and HTML changes simultaneously; browser devtools can show the grid structure even without HTML applying the classes.
+- Templates are the high-risk step (dark mode breakage) and are preceded by two stable phases where the codebase is confirmed working.
+- Polish is last because estimated shadow and radius values in planning are always wrong; they must be tuned against the real layout.
 
 ### Research Flags
 
-Phases with standard patterns (no research-phase needed):
-- **Phase 1:** Official Hugo + GitHub Pages documentation is comprehensive and current (Feb 2026 versions confirmed)
-- **Phase 2:** Hugo i18n is well-documented in official docs with concrete examples
-- **Phase 3:** CSS architecture for a minimal landing page has no novel decisions
-- **Phase 4:** OG tags and multilingual 404 are documented patterns with known solutions
+Phases with well-documented patterns (can skip additional research):
+- **Phase 1 (Tokens):** Fully specified in STACK.md and ARCHITECTURE.md with exact token values and computed contrast ratios. Implement directly — no research needed.
+- **Phase 2 (Grid CSS):** CSS Grid `grid-template-columns` is a mature, universally documented pattern. Specific breakpoints and class names are decided in research. Implement directly.
+- **Phase 4 (Polish):** CSS hover transitions and box-shadow layering are established patterns; specific values are tuned by eye after seeing the live layout.
 
-No phases require `/gsd:research-phase` during planning. All decisions are covered by research already completed at HIGH confidence from official sources.
+Phases requiring a careful pre-flight checklist (not research, but explicit test planning):
+- **Phase 3 (Templates):** Before starting, write the test matrix: all 4 theme states (OS-light unchecked, OS-light checked, OS-dark unchecked, OS-dark checked) x 2 languages x card click targets x keyboard tab order. Execute the full matrix after each HTML change, not just at the end.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All recommendations sourced from official Hugo docs (Feb 2026). Version numbers verified from GitHub releases. No community inference needed. |
-| Features | HIGH | MVP definition is clear and bounded. Table stakes vs. anti-features distinction is well-reasoned. Source mix of official docs + UX research (Smashing Magazine, Google Search) is credible. |
-| Architecture | HIGH | Architecture is Hugo's standard pattern, documented comprehensively in official Hugo docs. All code examples are verified template syntax. |
-| Pitfalls | HIGH | Every critical pitfall verified against official docs or GitHub issue tracker. The most common bugs (baseURL, CNAME, hreflang errors) have documented community evidence of frequency. |
+| Stack | HIGH | Official Hugo docs confirm Hugo Pipes patterns. CSS Grid, custom properties, and `color-scheme` property verified via MDN and caniuse with precise browser support percentages. The SCSS vs. plain CSS disagreement is a scope question, not a technical uncertainty. |
+| Features | HIGH | Table stakes features are mechanical CSS changes with no ambiguity. Anti-features are derived directly from project constraints (zero-JS, 3 equal-weight projects). Contrast ratios are computed values against actual current CSS, not estimates. |
+| Architecture | HIGH | Build order is derived from hard CSS dependencies (tokens → CSS → templates), not preference. The 4-block dark mode structure is the only viable CSS-only approach given the checkbox constraint. |
+| Pitfalls | HIGH | Critical pitfalls verified via direct codebase analysis (lines 78-101 of `main.css`, `baseof.html` DOM structure). The dark mode sibling constraint and border contrast failures are measured facts from the existing codebase, not speculative risks. |
 
-**Overall confidence:** HIGH
+**Overall confidence: HIGH**
 
 ### Gaps to Address
 
-- **Exact project descriptions:** `data/projects.toml` requires the actual one-sentence descriptions for Docora, Lumio, and Helix in both IT and EN. This is content, not architecture — can be filled in during Phase 3. Placeholder text is acceptable for earlier phases.
-- **Custom font decision:** Stack research recommends system fonts as default with clear guidance on self-hosting WOFF2 if a specific typeface is needed. The final typography decision (system stack vs. specific font) should be made before Phase 3 begins, since it affects whether `static/fonts/` and `@font-face` SCSS are needed.
-- **`defaultContentLanguageInSubdir` final decision:** Research recommends `true` (symmetric `/it/` and `/en/` URLs) but notes the trade-off of an HTML meta-refresh redirect at `/`. This is a Day 0 decision that must be confirmed before Phase 1 completes. The meta-refresh latency is minimal for a landing page but the UX pitfall (flash of redirect page) should be mitigated with an instant-redirect template at the root index.
+- **SCSS vs. plain CSS disagreement:** STACK.md recommends SCSS migration; ARCHITECTURE.md recommends staying with plain CSS. Resolved in this summary in favor of plain CSS. If the CSS file grows beyond ~600 lines during implementation, revisit SCSS partials at that point.
+- **Per-project accent colors:** FEATURES.md lists card accent border strips as a should-have differentiator but provides no specific color values. Defer the decision to Phase 4 — evaluate whether layered shadows alone provide sufficient card distinction before adding per-project colors.
+- **`:has()` selector migration:** PITFALLS.md recommends migrating from `#dark-toggle:checked + .page-wrapper` to `body:has(#dark-toggle:checked)` to eliminate the DOM adjacency constraint and reduce the 4 CSS blocks to 2. `:has()` is Baseline Widely Available at 93.7% support. Not pursued in v1.1 to keep scope contained; revisit if Pitfall 1 actually occurs during implementation.
+- **Fluid typography clamp values:** PITFALLS.md (Pitfall 10) flags that current `clamp()` values were tuned for 680px and may look undersized at 1080px. Minor issue; adjust during Phase 4 by eye.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [Hugo official docs: Host on GitHub Pages](https://gohugo.io/host-and-deploy/host-on-github-pages/) — GitHub Actions workflow, custom domain, CNAME setup
-- [Hugo official docs: Multilingual mode](https://gohugo.io/content-management/multilingual/) — i18n configuration, filename-based translation, language switcher
-- [Hugo official docs: Configuration introduction](https://gohugo.io/configuration/introduction/) — TOML config format
-- [Hugo official docs: Hugo Pipes](https://gohugo.io/hugo-pipes/) — CSS minification, fingerprinting, Sass
-- [Hugo official docs: css.Sass](https://gohugo.io/functions/css/sass/) — LibSass deprecation, Dart Sass migration
-- [Hugo official docs: Directory Structure](https://gohugo.io/getting-started/directory-structure/) — standard project layout
-- [Hugo official docs: Template Types](https://gohugo.io/templates/types/) — baseof, home, partial templates
-- [Hugo official docs: Data Templates](https://gohugo.io/templates/data-templates/) — data/ directory, .Site.Data
-- [Hugo official docs: lang.Translate](https://gohugo.io/functions/lang/translate/) — i18n T() function
-- [Hugo official docs: URL Management](https://gohugo.io/content-management/urls/) — baseURL, relURL, absURL
-- [Hugo official docs: Configure Languages](https://gohugo.io/configuration/languages/) — defaultContentLanguageInSubdir
-- [Hugo GitHub releases](https://github.com/gohugoio/hugo/releases) — v0.155.3 release date and changelog
-- [GitHub docs: Managing Custom Domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site) — DNS A records, CNAME, HTTPS provisioning
-- [GitHub docs: Securing with HTTPS](https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https) — Enforce HTTPS, certificate provisioning
-- [GitHub Actions starter workflow for Hugo](https://github.com/actions/starter-workflows/blob/main/pages/hugo.yml) — official workflow YAML
-- [Google: x-default hreflang](https://developers.google.com/search/blog/2013/04/x-default-hreflang-for-international-pages) — hreflang requirements
-- [Google: Managing Multi-Regional Sites](https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites) — multilingual SEO rules
+- Hugo css.Sass official docs (gohugo.io) — Dart Sass transpiler, `@use` syntax, Hugo Pipes fingerprinting
+- MDN: CSS Grid grid-template-areas — named grid areas specification and usage
+- W3C WCAG 2.1 SC 1.4.3 — text contrast requirement (4.5:1 normal, 3:1 large)
+- W3C WCAG 2.1 SC 1.4.11 — non-text contrast requirement for UI components (3:1)
+- MDN: color-scheme property — browser-level dark/light mode opt-in, 96%+ support
+- MDN: prefers-color-scheme — OS theme detection
+- MDN: CSS Grid Layout and Accessibility — source order vs visual order, WCAG 1.3.2
+- MDN: :has() CSS selector — Baseline Widely Available status, 93.7% support
+- caniuse.com: CSS Grid (97%+), color-scheme (96%+), CSS nesting (91%+), :has() (93.7%), light-dark() (85%), CSS Subgrid (87.8%)
+- WebAIM Contrast Checker — WCAG relative luminance formula and ratio validation
+- Codebase analysis of `assets/css/main.css` (lines 78-101, 280-287) and `layouts/_default/baseof.html` — measured contrast ratios from actual production values, DOM structure verification
 
 ### Secondary (MEDIUM confidence)
-- [Smashing Magazine: Designing a Better Language Selector](https://www.smashingmagazine.com/2022/05/designing-better-language-selector/) — flags vs. text switcher UX
-- [Hugo Discourse: Modules vs submodules](https://discourse.gohugo.io/t/theme-as-a-hugo-module-or-theme-as-a-git-submodule/54388) — community consensus on submodules as anti-pattern
-- [Hugo Discourse: defaultContentLanguageInSubdir gotchas](https://discourse.gohugo.io/t/defaultcontentlanguageinsubdir/4658) — URL asymmetry issues
-- [Hugo Discourse: Custom 404 per language](https://discourse.gohugo.io/t/custom-404-per-language/20239) — multilingual 404 workaround
-- [Hugo Issue #5898](https://github.com/gohugoio/hugo/issues/5898) — redirects for defaultContentLanguage sections
-- [Regis Philibert: Hugo Multilingual Part 1](https://www.regisphilibert.com/blog/2018/08/hugo-multilingual-part-1-managing-content-translation/) — translation approach comparison
-- [hreflang on Hugo sites (Wieckiewicz)](https://dariusz.wieckiewicz.org/en/setting-hreflang-and-x-default-on-multilingual-site-part-2/) — implementation examples
+- iamsteve.me: Build a bento layout with CSS grid — responsive bento patterns, 12-column approach
+- wearedevelopers.com: Building a Bento Grid Layout with Modern CSS Grid — `grid-template-columns`, responsive spans
+- Josh W. Comeau: Designing Beautiful Shadows in CSS — layered shadow technique for realistic depth
+- kleinfreund.de: CSS-only Dark Mode — checkbox hack deep-dive and limitations analysis
+- css-tricks.com: A Complete Guide to Dark Mode on the Web — 4-block checkbox approach, color-scheme meta tag
+- inkbotdesign.com / desinance.com: Bento Grid Design 2026 — 12-24px corner radius trend, gap guidance
+- code.mendhak.com: The unpleasant hackiness of CSS dark mode toggles — CSS-only toggle limitations
+- johnjago.com: Hugo detecting CSS changes but not rendering — fingerprint caching development friction
+- css-tricks.com: Grid Content Re-ordering and Accessibility — WCAG 1.3.2 and visual vs source order
 
 ---
-*Research completed: 2026-02-17*
+*Research completed: 2026-02-19*
 *Ready for roadmap: yes*

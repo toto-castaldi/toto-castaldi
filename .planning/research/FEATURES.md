@@ -1,182 +1,164 @@
-# Feature Research
+# Feature Landscape: v1.1 Bento Grid Redesign
 
-**Domain:** Minimal multilingual developer project showcase landing page
-**Researched:** 2026-02-17
-**Confidence:** HIGH
+**Domain:** Developer portfolio bento grid layout with responsive redesign and theme fix
+**Researched:** 2026-02-19
+**Overall confidence:** HIGH
 
-## Feature Landscape
+> This document covers NEW features for milestone v1.1 only. Existing v1.0 features (project cards, language switcher, dark mode toggle, Hugo i18n, SEO tags) are already shipped and not re-evaluated here.
 
-### Table Stakes (Users Expect These)
+## Table Stakes
 
-Features users assume exist. Missing these = product feels incomplete.
+Features the bento grid redesign must have. Without these, the redesign fails its purpose.
 
 | Feature | Why Expected | Complexity | Notes |
 |---------|--------------|------------|-------|
-| Project cards with name, description, and link | This IS the product. Visitors arrive to see projects and click through. Without clear cards, there is no landing page. | LOW | Each card: project name (h2), one-sentence description, link to subdomain. Three cards total. Hugo `data/` or front matter. |
-| Language switcher (IT/EN) | Bilingual visitors expect to toggle language. A multilingual site without a visible switcher is broken UX. | LOW | Text-based, not flags. Flags represent countries, not languages (Smashing Magazine best practice). Place in header/nav corner. Use Hugo's built-in i18n with `{{ .Translations }}`. |
-| Responsive / mobile-friendly layout | ~83% of web traffic is mobile. A landing page that breaks on phones is unusable. | LOW | CSS Grid or Flexbox. Three cards stack vertically on mobile. Hugo generates static HTML; responsiveness is pure CSS. |
-| Semantic HTML with proper heading hierarchy | Screen readers, SEO crawlers, and browsers all depend on semantic structure. Broken semantics = invisible to many users. | LOW | `<main>`, `<section>`, `<h1>` for page title, `<h2>` per project. `lang` attribute on `<html>` matching the current language. |
-| Favicon | Missing favicon = broken icon in browser tabs, bookmarks, and link previews. Looks unfinished. | LOW | SVG favicon with dark mode support via `<style>` inside SVG `<defs>` and `@media (prefers-color-scheme: dark)`. Single file, works in 97%+ of browsers. |
-| Fast page load (< 1s) | Single-page static site with no images should be near-instant. Slow load on a minimal page signals incompetence for a developer showcase. | LOW | Hugo generates static HTML. No JS framework needed. Inline critical CSS or use a single small stylesheet. No external dependencies at runtime. |
-| HTTPS | Browsers mark HTTP as "not secure." GitHub Pages provides HTTPS for custom domains for free. | LOW | Configured at GitHub Pages level, not in Hugo. Add CNAME file for custom domain. |
-| Proper `<title>` and meta description per language | Search engines and browser tabs need meaningful titles. Each language version needs its own metadata. | LOW | Hugo i18n strings or per-language front matter. `<title>Toto Castaldi - Progetti Software</title>` (IT) / `<title>Toto Castaldi - Software Projects</title>` (EN). |
+| 3-column grid on desktop | The entire point of v1.1. Current single-column layout wastes horizontal space and looks broken on desktop. Three projects = three columns is the natural mapping. | LOW | CSS Grid `grid-template-columns: repeat(3, 1fr)` on the existing `.project-cards` container. No HTML changes needed -- the Hugo `range` already outputs 3 `<article>` elements. |
+| Responsive collapse: 3 cols -> 1 col | Mobile screens (< 768px) cannot fit 3 columns. Single column stacking is the universal mobile pattern. | LOW | Mobile-first: default is `grid-template-columns: 1fr`, then `@media (min-width: 768px)` applies the 3-column layout. Current CSS already has a grid container; just needs column definition. |
+| Consistent gap spacing | Bento grids require uniform gutters (12-24px) between all cards. Inconsistent gaps break the "intentional layout" feel that defines bento design. | LOW | Already using `gap: var(--space-lg)` (2.5rem = 40px). Tighten to `gap: var(--space-md)` (1.5rem = 24px) for a more compact bento feel. |
+| Light mode passes WCAG AA contrast | Current light mode was flagged as failing contrast. Analysis shows muted text (#6b7280 on #ffffff) is 4.83:1 -- technically passes AA but barely. The real issue is likely border contrast (1.24:1) and overall "washed out" feeling. Must fix to feel legible. | LOW | Darken `--color-text-muted` to #4b5563 (7.56:1 ratio). Darken `--color-border` to #d1d5db or add card shadows instead of relying on borders for visual separation. |
+| Dark mode passes WCAG AA contrast | Dark mode is already passing (muted on card: 5.78:1) but should be verified after any color changes to maintain parity. | LOW | Current dark palette is solid. Verify after light mode fixes. No changes expected. |
+| Cards visually distinct from background | In bento design, each tile must read as a separate container. Cards need clear visual boundaries in both themes. | LOW | Combine border + subtle shadow + background differentiation. Current `border: 1px solid var(--color-border)` alone is insufficient in light mode (1.24:1 border contrast). |
 
-### Differentiators (Competitive Advantage)
+## Differentiators
 
-Features that set this product apart. Not required, but add polish that signals craft.
+Features that elevate the redesign from "functional grid" to "polished bento portfolio." Not strictly required, but high impact for low effort.
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| hreflang tags for multilingual SEO | Tells Google which language version to serve to which audience. Without hreflang, Google may show the Italian page to English searchers or flag pages as duplicate content. Most developer portfolio sites skip this entirely. | LOW | Hugo can generate these in the `<head>` partial. Add `<link rel="alternate" hreflang="it" href="...">` and `hreflang="en"` plus `hreflang="x-default"`. Reciprocal linking is required (Google's rule). |
-| Open Graph meta tags | When someone shares the URL on LinkedIn, Twitter, or Slack, a rich preview (title, description, image) appears instead of a bare URL. Signals professionalism. | LOW | `og:title`, `og:description`, `og:url`, `og:type` (website), `og:locale` (per language). Optional: `og:image` if a simple brand image is added later. Hugo template in `<head>`. |
-| Dark mode support (CSS `prefers-color-scheme`) | Respects user's OS-level preference. A developer showcase that handles dark mode shows attention to detail. Most minimal Hugo sites do not bother. | MEDIUM | CSS custom properties for colors, `@media (prefers-color-scheme: dark)` block. No JS toggle needed -- just respect the OS preference. Keep it simple: swap background/text colors and link colors. |
-| Print-friendly stylesheet | Visitors who want to save/print the project list get a clean output. Uncommon on developer sites but trivially implementable. | LOW | `@media print` CSS block hiding nav, language switcher; ensuring text is black-on-white. |
-| Accessible contrast ratios (WCAG AA) | 4.5:1 minimum contrast for body text, 3:1 for large text. Goes beyond "works" to "works for everyone." | LOW | Choose color palette deliberately. Test with browser DevTools contrast checker. Strong typography + high contrast = the design ethos already. |
-| Smooth, intentional typography scale | Using a modular type scale (e.g., 1.25 ratio) with deliberate sizing for h1/h2/body creates visual authority. Most dev portfolios use arbitrary sizes. | LOW | Define `--font-size-base`, `--font-size-lg`, `--font-size-xl`, `--font-size-2xl` as CSS custom properties. Two font families maximum: one sans-serif for headings (e.g., Inter), one for body (system font stack or same). |
-| Canonical URLs per language version | Prevents SEO duplicate content penalties. Each language page declares itself as canonical. | LOW | `<link rel="canonical" href="...">` in `<head>`, generated from Hugo's `.Permalink`. |
+| Rounded corners on cards (12-16px) | Signature bento visual. Apple-style rounded rectangles signal modern design. Current `border-radius: 0.5rem` (8px) is too subtle for bento. | LOW | Increase `border-radius` to `0.75rem` (12px) or `1rem` (16px). The 2026 bento trend leans toward 12-24px radii. |
+| Card hover elevation effect | Subtle `box-shadow` increase + slight `transform: translateY(-2px)` on hover creates depth. Makes cards feel interactive and tactile -- a hallmark of dashboard-style bento. | LOW | Pure CSS: `transition: box-shadow 0.2s, transform 0.2s` with hover state. Already have `transition: border-color 0.15s` on cards. Extend it. No JS needed. |
+| Layered box-shadow for depth | Single flat shadows look dated. Layering 2-3 shadows at different spreads creates realistic depth perception. Works beautifully in both light and dark modes with different shadow colors. | LOW | Light: `box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)`. Dark: `box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)`. Define via CSS variables. |
+| Wider page container | Current `--max-width: 680px` is perfect for single-column reading but too narrow for a 3-column bento grid. Cards would be ~200px wide -- cramped. | LOW | Increase `--max-width` to `960px` or `1080px` for the bento layout. This is the single most impactful change for the "3 cards in a row" goal. |
+| Card background subtle differentiation | In bento layouts, cards often use a slightly different background from the page to create visual layers. Current light mode has card-bg = page-bg = #ffffff (no differentiation). | LOW | Light: `--color-card-bg: #f8fafc` (very light gray) on `--color-bg: #ffffff`. Dark: already differentiated (#1f2937 cards on #111827 bg). |
+| 2-column tablet breakpoint | Between mobile (1 col) and desktop (3 col), tablets (768px-1024px) benefit from a 2-column layout where the third card spans full width below, or a centered 2+1 arrangement. | LOW | `@media (min-width: 768px) { grid-template-columns: repeat(2, 1fr); }` then `@media (min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }`. Clean progressive enhancement. |
+| Card accent/highlight per project | Each project card could have a subtle top-border color or left-accent strip, making cards visually distinguishable beyond just text. Adds personality without complexity. | LOW | `border-top: 3px solid var(--accent-docora)` etc. Define 3 accent colors as CSS variables. Works in both themes if colors are chosen carefully. |
+| `prefers-reduced-motion` respect | Disable hover transitions and any animations for users who have motion sensitivity. Small effort, significant accessibility signal for a developer portfolio. | LOW | `@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }`. Already should exist but is missing from current CSS. |
+| Smooth theme-aware border glow on hover | Instead of just border-color change on hover, a subtle glow effect (`box-shadow: 0 0 0 1px var(--color-link)`) around the card creates a modern focus/hover indicator that works in both themes. | LOW | Replace current `border-color` hover with a combination shadow: `box-shadow: 0 0 0 1px var(--color-link), 0 4px 12px rgba(37,99,235,0.1)`. |
 
-### Anti-Features (Commonly Requested, Often Problematic)
+## Anti-Features
 
-Features that seem good but create problems for this specific project.
+Features that seem natural for a bento redesign but should be explicitly avoided.
 
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|-----------------|-------------|
-| About/bio section | "People want to know who you are" | Explicitly out of scope per PROJECT.md. Adds content that dilutes the single purpose (showcase projects). Requires maintaining another block of translated content. | The projects themselves communicate capability. If needed later, add a single sentence above the project cards, not a section. |
-| Contact form | "How will people reach you?" | Requires a form backend (Formspree, Netlify Forms, etc.) on a static site. Adds JavaScript, a third-party dependency, and spam management. Overkill for a minimal showcase. | Not needed. This is a project directory, not a freelance portfolio. If contact is ever needed, a simple `mailto:` link suffices. |
-| Blog / dynamic content | "Show thought leadership" | Fundamentally changes the site from a landing page to a content site. Requires ongoing maintenance, RSS, pagination, taxonomy. Hugo supports it, but it is scope creep. | Keep the site as a single-page showcase. If blogging is desired, host it on a separate subdomain (e.g., blog.toto-castaldi.com). |
-| JavaScript animations / Three.js / scroll effects | "Modern portfolios have animations" | Adds bundle size, runtime dependencies, and accessibility issues (motion sensitivity). Contradicts "minimal clean design with strong typography." Animations on 3 project cards is gratuitous. | CSS transitions only where meaningful (e.g., subtle hover state on project links). `prefers-reduced-motion` media query to disable even those. |
-| Dark mode toggle button | "Let users pick their theme" | Requires JavaScript for state management and localStorage persistence. Adds complexity to a zero-JS site. OS-level preference is sufficient for a landing page. | Use `prefers-color-scheme` CSS media query. Respects user choice without any JS. |
-| Social media links / icons | "Connect with visitors" | Adds visual clutter to a minimal design. Icon fonts or SVG icon libraries add weight. Social links are expected on portfolios seeking clients -- this is a project directory. | Omit entirely per PROJECT.md out-of-scope. |
-| Analytics / tracking scripts | "Know your visitors" | Third-party JS (Google Analytics, Plausible, etc.) adds load time, privacy concerns, and cookie banner requirements (especially for EU/Italian visitors under GDPR). | If analytics is ever needed, use privacy-respecting server-side analytics (e.g., GoatCounter, which is a single `<script>` tag with no cookies). But for now, omit. |
-| Cookie consent banner | "GDPR compliance" | Only needed if you use cookies or tracking. A static HTML page with no JS, no analytics, no third-party requests sets zero cookies. Adding a cookie banner to a cookieless site is absurd. | Do not add cookies. No cookies = no banner needed. |
-| Auto-detect language from browser | "Show the right language automatically" | Creates confusion when users land on unexpected language. Makes bookmarking/sharing unpredictable (same URL, different content). Complicates caching. Hugo's approach of separate URLs per language is cleaner. | Default language (Italian, since .com domain targets Italian audience first) with visible language switcher. Let the user choose. |
-| Project detail pages | "Give each project its own page" | Each project already has its own full site on its subdomain. A detail page on the landing page would duplicate content and create maintenance burden for zero value. | Link directly to each project's subdomain. The landing page is a directory, not a CMS. |
+| Anti-Feature | Why Tempting | Why Avoid | What to Do Instead |
+|--------------|-------------|-----------|-------------------|
+| Variable-size bento tiles (2x1, 1x2, 2x2 spans) | "True" bento grids use mixed-size tiles for visual hierarchy. Apple keynotes showcase this heavily. | With exactly 3 project cards of equal importance, variable sizing creates false hierarchy. One card appearing bigger implies it matters more. All three projects are equal peers. | Equal-width 3-column grid. If extra bento sections are added later (tech stack, GitHub stats), THEN variable sizing makes sense for those secondary tiles. |
+| Glassmorphism / backdrop-filter blur | Trendy in 2024-2025 bento designs. Frosted glass cards look impressive. | Requires semi-transparent backgrounds, which complicates contrast calculations for WCAG AA. Also needs a decorative background (gradient, image) behind cards to show the blur effect -- adds complexity for no content value. Performance cost of `backdrop-filter` on older devices. | Solid card backgrounds with layered shadows. Cleaner, more accessible, faster, and ages better than trends. |
+| JavaScript-powered card animations | Scroll-triggered reveals, staggered fade-ins, GSAP animations. Many bento portfolio templates include these. | Violates the "zero JavaScript" constraint. Adds runtime dependencies, increases bundle size, creates accessibility issues (motion sensitivity). The site has 3 cards -- animation is gratuitous, not informative. | CSS-only hover transitions (transform, shadow). Respect `prefers-reduced-motion`. |
+| Grid auto-placement with `grid-auto-flow: dense` | Useful for masonry-like bento layouts where items reorder to fill gaps. | With exactly 3 equal cards, there are no gaps to fill. Dense packing reorders content, which can confuse screen readers (DOM order vs visual order mismatch). | Explicit `grid-template-columns: repeat(3, 1fr)` -- predictable, accessible, maintainable. |
+| Dark mode toggle with JavaScript + localStorage | Many sources recommend JS for theme persistence across page loads. The CSS-only checkbox hack loses state on navigation. | Already shipped with CSS-only checkbox toggle (v1.0 decision). Adding JS contradicts the zero-JS constraint. For a single-page landing, state persistence is unnecessary -- the user only visits one page. | Keep the existing CSS-only checkbox hack. It works for this use case. If the site ever grows to multiple pages, reconsider. |
+| Icon fonts or SVG icon libraries for card decoration | Card icons/illustrations are common in bento layouts. Libraries like Heroicons or Font Awesome. | External dependency. The projects already have logo SVGs loaded from their subdomains. Adding generic icons alongside logos creates visual clutter. | Use the existing project logos (`{{ .logo }}`). They are already in the template. If logos fail to load, the card still works (text-only fallback). |
+| CSS Container Queries for card internal layout | Modern technique where card contents respond to the card's own width rather than viewport. | Browser support is solid (Baseline 2023) but overkill for cards with simple content: logo, h2, p, link. The card internal layout does not change at any size -- content is always stacked vertically. | Standard media queries for the grid container. Container queries add complexity with no benefit here. |
+| Extra bento sections in this milestone (tech stack, GitHub links, stats) | PROJECT.md mentions "additional bento sections where design warrants." Tempting to add more tiles. | Scope creep. The milestone goal is "redesign with bento grid layout" for the 3 project cards. Adding new content sections changes the information architecture, requires new translations, and multiplies the work. | Ship the 3-card bento grid first. Evaluate whether extra sections add value after seeing the redesign live. Future milestone if warranted. |
 
 ## Feature Dependencies
 
 ```
-[Semantic HTML]
+[Wider max-width container]
     |
-    +--enhances--> [Accessible contrast ratios]
-    +--enhances--> [hreflang tags]
-    +--enhances--> [Open Graph meta tags]
-    +--requires--> [Proper <title> and meta per language]
+    +--enables--> [3-column grid layout]
+                      |
+                      +--enhances--> [2-column tablet breakpoint]
+                      +--enhances--> [Card hover effects]
+                      +--enhances--> [Card accent colors]
 
-[Hugo i18n setup]
+[WCAG AA contrast fix]
     |
-    +--requires--> [Language switcher]
-    +--requires--> [hreflang tags]
-    +--requires--> [Proper <title> and meta per language]
-    +--requires--> [Canonical URLs per language]
+    +--requires--> [Updated color tokens (--color-text-muted, --color-border)]
+    +--requires--> [Card background differentiation (--color-card-bg)]
+    +--blocks----> [Card hover effects] (hover colors must also pass contrast)
 
-[CSS custom properties]
+[CSS variable-based shadows]
     |
-    +--enables--> [Dark mode support]
-    +--enables--> [Typography scale]
+    +--enables--> [Theme-aware shadows (different values per theme)]
+    +--enables--> [Hover elevation effect]
+    +--enables--> [Border glow on hover]
 
-[Responsive layout]
-    +--independent (pure CSS, no dependencies)
-
-[Favicon]
-    +--independent (static asset)
+[prefers-reduced-motion]
+    +--independent (add after all transitions are defined)
 ```
 
 ### Dependency Notes
 
-- **Hugo i18n setup is foundational:** Language switcher, hreflang, per-language meta, and canonical URLs all depend on Hugo's multilingual configuration being set up first. This must be the first thing built.
-- **Semantic HTML enables SEO and accessibility:** Proper heading hierarchy and `lang` attributes make hreflang, Open Graph, and screen reader support work correctly.
-- **CSS custom properties enable theming:** Dark mode and typography scale both benefit from CSS variables. Define them once, reference everywhere.
-- **No JS dependencies exist:** Every feature listed can be implemented with HTML and CSS only. This is a deliberate architectural constraint.
+- **Wider container is the gating change.** Nothing else matters if `--max-width` stays at 680px. Three 200px columns are too narrow for readable cards. Increase to 960-1080px first.
+- **Contrast fixes must precede visual polish.** No point adding hover effects or shadows if the base colors fail accessibility. Fix tokens first, then layer effects.
+- **No HTML changes needed for the grid.** The existing Hugo template outputs 3 `<article>` elements inside a `.project-cards` container. All changes are pure CSS.
+- **Zero JavaScript remains the constraint.** Every feature listed is CSS-only. The checkbox dark mode toggle stays as-is.
 
-## MVP Definition
+## Implementation Priority (Recommended Order)
 
-### Launch With (v1)
+### Phase 1: Layout Foundation (must-do)
 
-Minimum viable product -- what is needed to validate the concept.
+1. **Increase `--max-width`** from 680px to 1080px -- enables 3-column grid
+2. **Add `grid-template-columns: repeat(3, 1fr)`** to `.project-cards` -- the core change
+3. **Add responsive breakpoints** -- mobile (1 col) / tablet (2 col) / desktop (3 col)
+4. **Tighten gap** from `--space-lg` to `--space-md` for bento proportions
 
-- [x] Project cards (name, description, link) for Docora, Lumio, Helix -- the core purpose
-- [x] Hugo multilingual setup (IT/EN) with i18n string files -- foundational requirement
-- [x] Language switcher in header -- bilingual visitors need to toggle
-- [x] Responsive layout -- mobile visitors must be served
-- [x] Semantic HTML structure -- baseline quality
-- [x] Favicon -- prevents "broken" appearance in browser tabs
-- [x] Proper `<title>` and meta description per language -- search engine baseline
-- [x] HTTPS via GitHub Pages -- non-negotiable security baseline
+### Phase 2: Contrast and Legibility (must-do)
 
-### Add After Validation (v1.x)
+5. **Fix `--color-text-muted`** in light mode: #6b7280 -> #4b5563 (4.83:1 -> 7.56:1)
+6. **Fix `--color-border`** in light mode: #e5e7eb -> #d1d5db (improve card boundary visibility)
+7. **Differentiate `--color-card-bg`** in light mode: #ffffff -> #f8fafc (subtle layering)
+8. **Verify dark mode** ratios still pass after any changes
 
-Features to add once core is working and deployed.
+### Phase 3: Visual Polish (should-do)
 
-- [ ] hreflang tags -- add when SEO matters, after Google indexes the site
-- [ ] Open Graph meta tags -- add when the URL is being shared publicly
-- [ ] Canonical URLs -- add alongside hreflang
-- [ ] Dark mode CSS -- add when the base design is finalized and stable
-- [ ] WCAG AA contrast audit -- verify after final color palette is chosen
-- [ ] Print stylesheet -- add after visual design is locked
+9. **Increase `border-radius`** to 12-16px for bento aesthetic
+10. **Add layered `box-shadow`** with CSS variables (theme-aware)
+11. **Add hover elevation** (translateY + shadow increase)
+12. **Add `prefers-reduced-motion`** media query
+13. **Optional: per-project accent colors** on card top border
 
-### Future Consideration (v2+)
+### Deferred
 
-Features to defer until the product proves its value.
+- Extra bento sections (tech stack, links) -- future milestone if needed
+- Variable-size tiles -- only relevant when more than 3 equal-weight items exist
+- Container queries -- not needed for this card structure
 
-- [ ] OG image (custom preview image for social sharing) -- requires graphic design effort
-- [ ] Structured data / JSON-LD -- only if SEO becomes a priority
-- [ ] Goatcounter analytics -- only if traffic measurement becomes needed
-- [ ] Additional projects beyond the initial three -- add when new projects exist
+## Contrast Audit (Current State)
 
-## Feature Prioritization Matrix
+Computed from the existing CSS custom property values:
 
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Project cards (name, desc, link) | HIGH | LOW | P1 |
-| Hugo i18n setup (IT/EN) | HIGH | LOW | P1 |
-| Language switcher | HIGH | LOW | P1 |
-| Responsive layout | HIGH | LOW | P1 |
-| Semantic HTML | HIGH | LOW | P1 |
-| Favicon | MEDIUM | LOW | P1 |
-| `<title>` + meta per language | MEDIUM | LOW | P1 |
-| HTTPS (GitHub Pages) | HIGH | LOW | P1 |
-| hreflang tags | MEDIUM | LOW | P2 |
-| Open Graph meta tags | MEDIUM | LOW | P2 |
-| Canonical URLs | MEDIUM | LOW | P2 |
-| Dark mode (CSS only) | LOW | MEDIUM | P2 |
-| WCAG AA contrast | MEDIUM | LOW | P2 |
-| Typography scale | MEDIUM | LOW | P2 |
-| Print stylesheet | LOW | LOW | P3 |
-| OG image | LOW | MEDIUM | P3 |
-| Structured data | LOW | MEDIUM | P3 |
+| Element | Light Mode | Dark Mode | WCAG AA | Status |
+|---------|-----------|-----------|---------|--------|
+| Body text on bg | #1a1a1a on #ffffff = 17.40:1 | #f3f4f6 on #111827 = 16.12:1 | 4.5:1 | PASS both |
+| Muted text on bg | #6b7280 on #ffffff = 4.83:1 | #9ca3af on #111827 = 6.99:1 | 4.5:1 | PASS both (light barely) |
+| Muted text on card | #6b7280 on #ffffff = 4.83:1 | #9ca3af on #1f2937 = 5.78:1 | 4.5:1 | PASS both (light barely) |
+| Link on bg | #2563eb on #ffffff = 5.17:1 | #60a5fa on #111827 = 6.98:1 | 4.5:1 | PASS both |
+| Border on bg (UI) | #e5e7eb on #ffffff = 1.24:1 | #374151 on #111827 = 1.72:1 | 3.0:1 | **FAIL both** |
 
-**Priority key:**
-- P1: Must have for launch -- the site does not function without these
-- P2: Should have, add after initial deploy -- polish and professionalism
-- P3: Nice to have, future consideration -- only if specific need arises
+**Key finding:** Muted text passes AA but feels weak in light mode. The real failure is **border contrast** -- card boundaries are nearly invisible, especially in light mode. This is likely what "light mode fails contrast" refers to. Fix: stronger borders + card shadows + background differentiation.
 
-## Competitor Feature Analysis
+## Recommended Color Token Updates
 
-| Feature | Simplefolio (GitHub template) | HugoBlox Landing Page | Introduction Theme | Our Approach |
-|---------|-------------------------------|----------------------|-------------------|--------------|
-| Project showcase | Cards with image, title, description, links to live site and source | Markdown-driven sections with customizable blocks | Full single-page with multiple sections | Three clean text-only cards. No images. Name + description + link. Maximally minimal. |
-| Multilingual | Not supported | Not built-in (requires manual Hugo i18n) | Built-in multilingual support | First-class IT/EN with Hugo i18n. Language switcher in header. hreflang tags. |
-| Dark mode | Not supported | Automatic dark mode | Light and dark themes | CSS `prefers-color-scheme` only. No toggle. Respect OS preference. |
-| Typography | Standard Bootstrap typography | Theme-dependent | Theme-dependent | Intentional modular type scale. Typography IS the design. Two font families max. |
-| JavaScript | jQuery required | Hugo Blox JS bundle | Minimal JS | Zero JavaScript. Pure HTML + CSS. |
-| About section | Included by default | Included by default | Included by default | Deliberately excluded. Projects only. |
-| Contact | Included (email link) | Contact form widget | Contact section | Deliberately excluded. |
-| Animations | Fade-in on scroll | Theme animations | Smooth scrolling | None. Static content. CSS hover transitions only. |
-| Performance | Moderate (jQuery + images) | Moderate (JS bundle) | Good (minimal JS) | Excellent (<1s load, no JS, no images, inline CSS possible) |
+### Light Mode (proposed)
+
+| Token | Current | Proposed | Contrast on #ffffff | Rationale |
+|-------|---------|----------|---------------------|-----------|
+| `--color-text-muted` | #6b7280 | #4b5563 | 7.56:1 (was 4.83:1) | Comfortable margin above AA. Descriptions clearly readable. |
+| `--color-border` | #e5e7eb | #cbd5e1 | ~1.8:1 | Still subtle, but combined with shadow, cards are clearly bounded. |
+| `--color-card-bg` | #ffffff | #f8fafc | N/A | Creates layering against page background. Card feels like a surface. |
+
+### Dark Mode (no changes needed)
+
+All dark mode values already pass WCAG AA with comfortable margins. The palette is well-chosen.
 
 ## Sources
 
-- [Hostinger: 25 web developer portfolio examples](https://www.hostinger.com/tutorials/web-developer-portfolio) -- common portfolio features analysis
-- [Smashing Magazine: Designing a Better Language Selector](https://www.smashingmagazine.com/2022/05/designing-better-language-selector/) -- flags vs text-based switcher best practices
-- [Usersnap: Designing a Language Switch](https://usersnap.com/blog/design-language-switch/) -- language switcher UX patterns
-- [Google: x-default hreflang for international pages](https://developers.google.com/search/blog/2013/04/x-default-hreflang-for-international-pages) -- hreflang implementation requirements
-- [Google: Managing Multi-Regional Sites](https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites) -- multilingual SEO rules
-- [CSS-Tricks: Dark Mode Favicons](https://css-tricks.com/dark-mode-favicons/) -- SVG favicon dark mode technique
-- [Joyofcode: Dark Mode Favicon](https://joyofcode.xyz/dark-mode-favicon) -- HTML-only favicon approach
-- [Hugo: Multilingual mode](https://gohugo.io/content-management/multilingual/) -- official Hugo i18n documentation
-- [victoriadrake/hugo-theme-introduction](https://github.com/victoriadrake/hugo-theme-introduction) -- minimal multilingual Hugo theme reference
-- [HugoBlox Landing Page Template](https://hugoblox.com/templates/details/landing-page/) -- Hugo landing page feature set
+- [WeAreDevelopers: Building a Bento Grid Layout with Modern CSS Grid](https://www.wearedevelopers.com/en/magazine/682/building-a-bento-grid-layout-with-modern-css-grid-682) -- CSS Grid bento patterns (HIGH confidence)
+- [iamsteve: Build a bento layout with CSS grid](https://iamsteve.me/blog/bento-layout-css-grid) -- 12-column grid, card spanning, responsive breakpoints (HIGH confidence)
+- [ibelick: Creating Bento Grid Layouts](https://ibelick.com/blog/create-bento-grid-layouts) -- grid-template-columns, auto-rows, spanning techniques (HIGH confidence)
+- [SaaSFrame: Designing Bento Grids That Actually Work (2026)](https://www.saasframe.io/blog/designing-bento-grids-that-actually-work-a-2026-practical-guide) -- 12-24px gap guidance, hierarchy principles (MEDIUM confidence)
+- [Inkbot Design: Bento Grid Design for Conversion (2026)](https://inkbotdesign.com/bento-grid-design/) -- 6-12 blocks max, hierarchy encoding (MEDIUM confidence)
+- [Desinance: Bento Grid Web Design (2026)](https://desinance.com/design/bento-grid-web-design/) -- 12-24px corner radius trend, micro-interactions (MEDIUM confidence)
+- [DubBot: Dark Mode Best Practices for Accessibility](https://dubbot.com/dubblog/2023/dark-mode-a11y.html) -- avoid saturated colors, focus indicator visibility (HIGH confidence)
+- [AllAccessible: Color Contrast WCAG 2025 Guide](https://www.allaccessible.org/blog/color-contrast-accessibility-wcag-guide-2025) -- 4.5:1 normal text, 3:1 large text/UI (HIGH confidence)
+- [W3C: Understanding Contrast (Minimum) WCAG 2.2](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) -- authoritative contrast requirements (HIGH confidence)
+- [Josh W. Comeau: Designing Beautiful Shadows in CSS](https://www.joshwcomeau.com/css/designing-shadows/) -- layered shadow technique for depth (HIGH confidence)
+- [code.mendhak.com: The unpleasant hackiness of CSS dark mode toggles](https://code.mendhak.com/css-dark-mode-toggle-sucks/) -- CSS-only toggle limitations, localStorage tradeoffs (MEDIUM confidence)
+- [Speckyboy: 8 CSS Snippets for Bento Grid Layouts](https://speckyboy.com/css-bento-grid-layouts/) -- practical code snippets (MEDIUM confidence)
+- [BentoGrids.com](https://bentogrids.com/) -- curated bento design gallery for reference (MEDIUM confidence)
+- Contrast ratios computed locally using WCAG relative luminance formula against current `main.css` color values (HIGH confidence)
 
 ---
-*Feature research for: Minimal multilingual developer project showcase landing page*
-*Researched: 2026-02-17*
+*Feature research for v1.1 Bento Grid Redesign of toto-castaldi.com*
+*Researched: 2026-02-19*

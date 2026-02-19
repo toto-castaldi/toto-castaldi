@@ -1,427 +1,629 @@
-# Architecture Research
+# Architecture: Bento Grid Redesign
 
-**Domain:** Hugo multilingual landing page (IT/EN) for software project showcase
-**Researched:** 2026-02-17
+**Domain:** Hugo landing page redesign -- bento grid layout, responsive behavior, dark/light theming
+**Researched:** 2026-02-19
 **Confidence:** HIGH
 
-## Standard Architecture
+## Current Architecture Snapshot
+
+The existing site is 501 LOC across 11 files. The key integration points for the redesign are:
+
+```
+layouts/_default/baseof.html    HTML shell with checkbox dark mode toggle
+layouts/index.html              Home page template (h1 + tagline + project cards loop)
+assets/css/main.css             All styles (301 lines, plain CSS, design tokens as custom properties)
+data/projects.toml              3 projects with per-language descriptions
+```
+
+**Critical constraint:** The `#dark-toggle` checkbox is a **sibling** of `.page-wrapper` in the DOM. The CSS selector `#dark-toggle:checked + .page-wrapper` requires this adjacency. Any bento grid restructuring must preserve this relationship.
+
+## Recommended Architecture for Bento Grid
 
 ### System Overview
 
 ```
-Build Time (Hugo)                              Runtime (GitHub Pages)
-=================                              =====================
+BEFORE (v1.0)                          AFTER (v1.1)
+=============                          ============
 
- config/                                        toto-castaldi.com/
- +-- _default/                                  +-- index.html        (EN home)
- |   +-- hugo.toml        ---+                  +-- it/
- |   +-- languages.toml       |                 |   +-- index.html    (IT home)
- |   +-- menus.en.toml        |                 +-- css/
- |   +-- menus.it.toml        |                 |   +-- style.min.*.css
- content/                      |  hugo --minify  +-- js/ (if any)
- +-- _index.en.md         ----+---------------> +-- images/
- +-- _index.it.md              |                 +-- favicon.ico
- i18n/                         |                 +-- robots.txt
- +-- en.toml               ---+
- +-- it.toml                   |
- layouts/                      |
- +-- _default/                 |
- |   +-- baseof.html       ---+
- +-- index.html                |
- +-- partials/                 |
- |   +-- head.html             |
- |   +-- header.html           |
- |   +-- project-card.html     |
- |   +-- language-switcher.html|
- |   +-- footer.html       ---+
- assets/                       |
- +-- css/                      |
- |   +-- main.css          ---+
- static/
- +-- images/
- +-- favicon.ico
+<body>                                 <body>
+  <input#dark-toggle>                    <input#dark-toggle>
+  <div.page-wrapper>                     <div.page-wrapper>
+    <header>                               <header.site-header>
+      [toggle] [lang-switch]                 [toggle] [lang-switch]
+    </header>                              </header>
+    <main>                                 <main.bento-grid>
+      <section>                              <section.bento-cell.bento-hero>
+        <h1> + <p.tagline>                     <h1> + <p.tagline>
+      </section>                             </section>
+      <section.project-cards>                <article.bento-cell.bento-project>
+        <article.project-card> x3              [logo] [name] [desc] [link]
+      </section>                             </article>  (x3)
+    </main>                                  <section.bento-cell.bento-extra>
+  </div>                                       [optional: tech stack, GitHub, etc.]
+</body>                                      </section>
+                                           </main>
+                                         </div>
+                                       </body>
 ```
 
-This is a static site generator architecture. There is no server, no database, no API. Hugo compiles templates + content + data into a flat directory of HTML/CSS/JS files. GitHub Pages serves those files directly. The entire "backend" is the build step.
+### Component Boundaries
 
-### Component Responsibilities
+| Component | Responsibility | Communicates With | Status |
+|-----------|---------------|-------------------|--------|
+| `baseof.html` | HTML shell, dark mode checkbox, header, main block | All partials, CSS | MODIFY -- add `bento-grid` class to `<main>`, keep checkbox/page-wrapper relationship |
+| `index.html` | Home page content: hero section + project cards | `baseof.html` via block, `data/projects.toml` | MODIFY -- restructure into bento cells |
+| `head.html` | Meta tags, CSS link, asset pipeline | Hugo Pipes | MODIFY -- change `resources.Get` path if converting to SCSS |
+| `main.css` | All visual styles | Referenced by `head.html` | REWRITE -- new grid system, revised design tokens, bento layout |
+| `projects.toml` | Project metadata | Read by `index.html` template | NO CHANGE |
+| `language-switcher.html` | EN/IT toggle | Called by `baseof.html` | NO CHANGE |
+| `seo.html` | SEO meta tags | Called by `head.html` | NO CHANGE |
 
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| **config/** | Site metadata, language definitions, menu structures | TOML files split by concern (hugo.toml, languages.toml, menus.*.toml) |
-| **content/** | Page content in Markdown with front matter | `_index.en.md` and `_index.it.md` for the home page (translation by filename) |
-| **i18n/** | UI string translations (buttons, labels, headings) | `en.toml` and `it.toml` with key-value pairs |
-| **layouts/** | HTML templates that define page structure | baseof.html (shell), index.html (home), partials (reusable components) |
-| **assets/** | CSS/JS processed through Hugo Pipes | `main.css` processed with minification and fingerprinting |
-| **static/** | Files copied verbatim to output (images, favicon) | Binary assets, robots.txt |
-| **data/** | Structured data accessible in templates via `.Site.Data` | Project definitions (Docora, Lumio, Helix) as TOML/YAML |
-| **.github/workflows/** | CI/CD pipeline for building and deploying | GitHub Actions workflow using Hugo extended edition |
+### New vs Modified Files
 
-## Recommended Project Structure
+| File | Action | Rationale |
+|------|--------|-----------|
+| `assets/css/main.css` | REWRITE | New grid system, new design tokens, new bento component styles |
+| `layouts/_default/baseof.html` | MODIFY | Add class to `<main>`, keep dark mode structure intact |
+| `layouts/index.html` | REWRITE | Restructure content into bento grid cells |
+| `layouts/partials/project-card.html` | NEW (optional) | Extract project card as a reusable partial for cleaner `index.html` |
+| `data/projects.toml` | MODIFY (optional) | Add `color` or `icon` field per project for bento cell differentiation |
 
-```
-toto-castaldi/
-+-- .github/
-|   +-- workflows/
-|       +-- hugo.yaml              # Build and deploy to GitHub Pages
-+-- config/
-|   +-- _default/
-|       +-- hugo.toml              # Site-wide settings (baseURL, title)
-|       +-- languages.toml         # Language definitions (en, it)
-|       +-- menus.en.toml          # English navigation
-|       +-- menus.it.toml          # Italian navigation
-+-- content/
-|   +-- _index.en.md              # English home page content
-|   +-- _index.it.md              # Italian home page content
-+-- data/
-|   +-- projects.toml             # Project data (Docora, Lumio, Helix)
-+-- i18n/
-|   +-- en.toml                   # English UI strings
-|   +-- it.toml                   # Italian UI strings
-+-- layouts/
-|   +-- _default/
-|   |   +-- baseof.html           # Base HTML shell (head, body wrapper)
-|   +-- index.html                # Home page template
-|   +-- partials/
-|       +-- head.html             # <head> tag (meta, CSS, fonts)
-|       +-- header.html           # Site header with nav + language switcher
-|       +-- project-card.html     # Single project display component
-|       +-- language-switcher.html # EN/IT toggle
-|       +-- footer.html           # Site footer
-+-- assets/
-|   +-- css/
-|       +-- main.css              # Stylesheet (processed by Hugo Pipes)
-+-- static/
-|   +-- images/                   # Project logos, hero images
-|   +-- favicon.ico
-|   +-- CNAME                     # Custom domain for GitHub Pages
-+-- .planning/                    # Project planning (not published)
-```
-
-### Structure Rationale
-
-- **config/_default/:** Hugo supports split configuration. Separating `hugo.toml`, `languages.toml`, and menu files keeps each concern isolated. The `_default` subdirectory is Hugo's convention for the default configuration environment.
-
-- **content/ with filename-based translation:** For a simple 2-language landing page, using `_index.en.md` and `_index.it.md` in the same directory is simpler than separate content directories. Files sharing the same basename are automatically linked as translations. This approach keeps related translations adjacent and visible.
-
-- **data/projects.toml:** Project information (Docora, Lumio, Helix) is structured data, not prose content. Storing it in `data/` makes it accessible via `.Site.Data.projects` in templates, enabling a single template to loop over all projects. This separates data from presentation cleanly.
-
-- **i18n/ for UI strings:** All user-facing text that is not page content (section headings, button labels, "View Project", "About") goes in i18n files. The `{{ T "key" }}` function retrieves the correct translation automatically based on the current language context.
-
-- **layouts/partials/:** Each visual component gets its own partial template. This enables reuse and keeps the main template readable. Hugo partials are called with `{{ partial "name.html" . }}`.
-
-- **assets/ vs static/:** CSS goes in `assets/` to leverage Hugo Pipes (minification, fingerprinting for cache busting). Images and other binary files go in `static/` since they do not need processing.
-
-## Architectural Patterns
-
-### Pattern 1: Translation by Filename (Recommended for This Project)
-
-**What:** Content files use language suffixes: `_index.en.md`, `_index.it.md`. Hugo automatically links them as translations of the same page.
-
-**When to use:** Small sites with few pages where you want translations side by side. Perfect for a 2-language landing page.
-
-**Trade-offs:** Easy to spot missing translations (files are adjacent). Does not scale well to 10+ languages or hundreds of pages, but that is irrelevant for this project.
-
-**Example:**
-```markdown
-<!-- content/_index.en.md -->
----
-title: "Toto Castaldi"
-description: "Software projects showcase"
----
-
-Welcome to my projects.
-```
-
-```markdown
-<!-- content/_index.it.md -->
----
-title: "Toto Castaldi"
-description: "Vetrina progetti software"
----
-
-Benvenuto tra i miei progetti.
-```
-
-### Pattern 2: Structured Data for Project Listings
-
-**What:** Define project metadata in `data/projects.toml` as an array. Templates iterate over `.Site.Data.projects` to render project cards. Translation of project descriptions uses i18n keys or per-language fields in the data file.
-
-**When to use:** When multiple items share the same display structure but vary in content. Avoids duplicating template logic.
-
-**Trade-offs:** Couples data structure to template expectations. For 3 projects this is the right level of abstraction; a CMS-like approach (each project as a content page) would be overengineering.
-
-**Example:**
-```toml
-# data/projects.toml
-[[projects]]
-  name = "Docora"
-  url = "https://github.com/toto-castaldi/docora"
-  description_en = "Short description of Docora"
-  description_it = "Breve descrizione di Docora"
-
-[[projects]]
-  name = "Lumio"
-  url = "https://github.com/toto-castaldi/lumio"
-  description_en = "Short description of Lumio"
-  description_it = "Breve descrizione di Lumio"
-
-[[projects]]
-  name = "Helix"
-  url = "https://github.com/toto-castaldi/helix"
-  description_en = "Short description of Helix"
-  description_it = "Breve descrizione di Helix"
-```
-
-```html
-<!-- layouts/partials/project-card.html -->
-{{ $lang := .Site.Language.Lang }}
-{{ range .Site.Data.projects.projects }}
-<article class="project-card">
-  <h3>{{ .name }}</h3>
-  <p>{{ index . (printf "description_%s" $lang) }}</p>
-  <a href="{{ .url }}">{{ T "view_project" }}</a>
-</article>
-{{ end }}
-```
-
-### Pattern 3: Base Template with Blocks
-
-**What:** `baseof.html` defines the HTML shell with named `{{ block }}` placeholders. Page templates fill those blocks with `{{ define }}`. This separates structural HTML from page-specific content.
-
-**When to use:** Always. This is Hugo's standard template inheritance model.
-
-**Trade-offs:** None meaningful. It is the canonical way to build Hugo templates.
-
-**Example:**
-```html
-<!-- layouts/_default/baseof.html -->
-<!DOCTYPE html>
-<html lang="{{ .Site.Language.Lang }}">
-<head>
-  {{ partial "head.html" . }}
-</head>
-<body>
-  {{ partial "header.html" . }}
-  <main>
-    {{ block "main" . }}{{ end }}
-  </main>
-  {{ partial "footer.html" . }}
-</body>
-</html>
-```
-
-```html
-<!-- layouts/index.html -->
-{{ define "main" }}
-<section class="hero">
-  <h1>{{ .Title }}</h1>
-  <p>{{ .Description }}</p>
-</section>
-
-<section class="projects">
-  <h2>{{ T "projects_heading" }}</h2>
-  {{ partial "project-card.html" . }}
-</section>
-{{ end }}
-```
-
-### Pattern 4: Hugo Pipes for Asset Processing
-
-**What:** CSS files in `assets/` are processed through Hugo Pipes for minification and fingerprinting (cache busting), then referenced in templates.
-
-**When to use:** Always for CSS and JS. Produces optimized output with unique filenames that work correctly with CDN caching.
-
-**Trade-offs:** Slightly more complex template syntax than a plain `<link>` tag, but worth it for production builds.
-
-**Example:**
-```html
-<!-- layouts/partials/head.html -->
-{{ $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint }}
-<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
-```
+**No new infrastructure files needed.** The redesign is purely template + CSS. No changes to Hugo config, i18n files, CI/CD pipeline, or deployment.
 
 ## Data Flow
 
-### Build Flow
+### Current Flow (unchanged)
 
 ```
-[Content .md files] + [i18n .toml files] + [data/ .toml files]
-         |                    |                      |
-         v                    v                      v
-    .Page object         T() function          .Site.Data
-         |                    |                      |
-         +--------------------+----------------------+
-                              |
-                              v
-                    [layouts/ templates]
-                              |
-                              v
-                 [Hugo Pipes: CSS/JS processing]
-                              |
-                              v
-                    [public/ output directory]
-                              |
-                              v
-              [GitHub Actions: upload artifact]
-                              |
-                              v
-                [GitHub Pages: serve static files]
+data/projects.toml  -->  {{ range .Site.Data.projects.project }}  -->  HTML articles
+i18n/*.toml         -->  {{ T "key" }}                            -->  UI strings
+                         {{ index .description site.Language.Lang }}  -->  Per-language text
 ```
 
-### Language Resolution Flow
+### Bento Grid Data Flow (new)
 
 ```
-[User visits toto-castaldi.com/]
-    |
-    +--> GitHub Pages serves /index.html (English, default language)
-    |
-[User visits toto-castaldi.com/it/]
-    |
-    +--> GitHub Pages serves /it/index.html (Italian)
+Project data flows into bento cells via the same range loop.
+No new data sources needed.
 
-At build time:
-[Hugo processes _index.en.md]
-    |
-    +--> Renders with .Site.Language.Lang = "en"
-    |    T() reads from i18n/en.toml
-    |    Data descriptions use description_en field
-    |    Output: public/index.html
-    |
-[Hugo processes _index.it.md]
-    |
-    +--> Renders with .Site.Language.Lang = "it"
-         T() reads from i18n/it.toml
-         Data descriptions use description_it field
-         Output: public/it/index.html
+Optional: Add per-project visual properties to data/projects.toml:
+
+  [[project]]
+  name = "Docora"
+  accent = "#2563eb"      <-- Optional: per-card accent color for bento visual interest
+  gridSpan = "wide"       <-- Optional: hint for CSS class (bento-cell--wide)
 ```
 
-### Key Data Flows
+The `gridSpan` approach is NOT recommended for 3 cards. Use CSS `nth-child` or explicit grid-template-areas instead. Data files should store content, not layout concerns.
 
-1. **Content to page:** Markdown front matter becomes `.Title`, `.Description`, `.Params.*`. Markdown body becomes `.Content`. Hugo renders content through the matching template based on lookup order.
+## CSS Architecture
 
-2. **i18n to UI strings:** `{{ T "key" }}` looks up the key in the current language's i18n file. Falls back to `defaultContentLanguage` if missing. Returns empty string as last resort.
+### Approach: Keep Plain CSS (Do Not Convert to SCSS)
 
-3. **Data to template:** `{{ .Site.Data.projects.projects }}` returns the array from `data/projects.toml`. Templates range over it and extract per-language fields.
+**Rationale:**
+- The current CSS is 301 lines. Even after the bento rewrite it will be under 500 lines.
+- Hugo Pipes already handles minification and fingerprinting on plain CSS.
+- CSS custom properties provide the variable/token system that SCSS variables would offer.
+- Native CSS nesting has 91% browser support (Chrome 120+, Firefox 117+, Safari 17.2+). If nesting is needed, native CSS nesting is sufficient.
+- Adding SCSS adds a build dependency (Dart Sass is already installed in CI, but it is an unnecessary processing step for this codebase size).
+- Converting to SCSS provides no benefit that plain CSS does not already cover at this scale.
 
-4. **Assets to output:** `resources.Get` loads from `assets/`, piped through `Minify` and `Fingerprint`, published to `public/` with a content-hash filename.
+**Decision:** Stay with `assets/css/main.css` as plain CSS. Use CSS custom properties for design tokens. Use native CSS nesting sparingly if it improves readability.
 
-5. **Translation linking:** Hugo automatically links `_index.en.md` and `_index.it.md` as translations. Templates access translations via `.Translations` for building the language switcher.
+### CSS File Structure (within main.css)
 
-## Scaling Considerations
+```css
+/* ============================
+   1. Reset
+   ============================ */
 
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| 2 languages, 1 page (current) | Filename-based translation, single data file, no theme needed |
-| 5 languages, 5 pages | Consider switching to content-directory translation (`contentDir` per language). Still no theme needed. |
-| 10+ languages, 20+ pages | Use content-directory approach. Consider a Hugo theme for maintainability. Add `translationKey` front matter for pages that do not follow naming conventions. |
+/* ============================
+   2. Design Tokens (Light Mode default)
+   ============================ */
+:root { ... }
 
-### Scaling Priorities
+/* ============================
+   3. Design Tokens (Dark Mode -- OS preference)
+   ============================ */
+@media (prefers-color-scheme: dark) { :root { ... } }
 
-1. **First to outgrow:** The data file approach for projects. If projects grow beyond 10 with rich descriptions, switch to content pages (`content/projects/docora/index.en.md`). For 3 projects, the data file is perfect.
+/* ============================
+   4. Dark Mode Toggle Overrides
+   ============================ */
+#dark-toggle:checked + .page-wrapper { ... }
+@media (prefers-color-scheme: dark) {
+  #dark-toggle:checked + .page-wrapper { ... }
+}
 
-2. **Second to outgrow:** Filename-based translation. If adding more than 4-5 languages, the directory approach (`content/en/`, `content/it/`) becomes cleaner. For 2 languages, filename is ideal.
+/* ============================
+   5. Base Typography & Elements
+   ============================ */
 
-## Anti-Patterns
+/* ============================
+   6. Page Layout (page-wrapper, site-header)
+   ============================ */
 
-### Anti-Pattern 1: Using a Full Theme for a Minimal Site
+/* ============================
+   7. Bento Grid System
+   ============================ */
+.bento-grid { ... }
+.bento-cell { ... }
 
-**What people do:** Install a pre-built Hugo theme (e.g., PaperMod, Ananke) and try to customize it heavily for a landing page.
+/* ============================
+   8. Bento Cell Variants
+   ============================ */
+.bento-hero { ... }
+.bento-project { ... }
+.bento-extra { ... }
 
-**Why it's wrong:** Themes carry hundreds of files, complex configuration, and opinions about structure. For a single landing page, the overhead of understanding and overriding theme templates exceeds the cost of writing 5-6 simple templates from scratch.
+/* ============================
+   9. Project Card Component
+   ============================ */
 
-**Do this instead:** Write templates directly in `layouts/`. A landing page needs `baseof.html`, `index.html`, and 4-5 partials. Total: ~150 lines of HTML. Full control, no theme dependency.
+/* ============================
+   10. Dark Mode Toggle Button
+   ============================ */
 
-### Anti-Pattern 2: Duplicating HTML Across Languages
-
-**What people do:** Create separate `index-en.html` and `index-it.html` layout files with hardcoded text in each.
-
-**Why it's wrong:** Any design change must be applied twice. Translations drift. Hugo's entire multilingual system exists to prevent this.
-
-**Do this instead:** One set of templates. Use `{{ T "key" }}` for UI strings, `.Content` for page prose, and language-aware data access for project descriptions. The template is language-agnostic; Hugo handles language switching.
-
-### Anti-Pattern 3: Putting CSS in static/ Instead of assets/
-
-**What people do:** Place CSS in `static/css/style.css` and link it with a plain `<link>` tag.
-
-**Why it's wrong:** No minification, no fingerprinting (cache busting), no Sass/PostCSS processing. Users may see stale CSS after updates due to browser caching.
-
-**Do this instead:** Place CSS in `assets/css/main.css`. Use Hugo Pipes: `resources.Get | resources.Minify | resources.Fingerprint`. The output gets a content-hash filename that changes on every edit, preventing cache staleness.
-
-### Anti-Pattern 4: Content-Directory Translation for a 2-Language Single-Page Site
-
-**What people do:** Set up `content/en/_index.md` and `content/it/_index.md` with `contentDir` configuration for each language, even when the site has just one page.
-
-**Why it's wrong:** Adds unnecessary configuration complexity (`contentDir` per language in `languages.toml`). For a single page, the filename approach (`_index.en.md`, `_index.it.md`) is simpler and achieves the same result with zero extra configuration.
-
-**Do this instead:** Use filename-based translation. Add `.en.md` / `.it.md` suffixes. Hugo links them automatically.
-
-## Integration Points
-
-### External Services
-
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| **GitHub Pages** | GitHub Actions workflow builds Hugo site and deploys `public/` as artifact | Set source to "GitHub Actions" in repo Settings > Pages |
-| **Custom Domain (toto-castaldi.com)** | `CNAME` file in `static/`, DNS A/CNAME records pointing to GitHub | Place `CNAME` in `static/` so it copies to `public/` root on build |
-| **Google Fonts (optional)** | `<link>` tag in `head.html` partial, or self-host in `static/fonts/` | Self-hosting avoids GDPR cookie consent issues in EU (Italy) |
-
-### Internal Boundaries
-
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| **config -> templates** | `.Site.Title`, `.Site.Params.*`, `.Site.Menus.*` | Config values available globally in all templates |
-| **content -> templates** | `.Title`, `.Content`, `.Params.*`, `.Description` | Each content file maps to a Page object |
-| **i18n -> templates** | `{{ T "key" }}` function | Automatic language context from current page |
-| **data -> templates** | `.Site.Data.projects` | Merged data structure, available globally |
-| **assets -> templates** | `resources.Get "path"` | Returns a Resource for pipeline processing |
-| **templates -> output** | Hugo renderer | Templates produce HTML; Hugo writes to `public/` |
-
-## Build Order (Dependencies Between Components)
-
-The following order reflects true dependencies -- each step requires the previous ones to exist.
-
-```
-Phase 1: Foundation
-  hugo.toml + languages.toml     (site exists, languages defined)
-  baseof.html                     (HTML shell exists)
-  head.html partial               (CSS link, meta tags)
-
-Phase 2: Content Structure
-  _index.en.md + _index.it.md    (pages exist)
-  index.html template             (home page renders)
-  i18n/en.toml + i18n/it.toml   (UI strings translate)
-
-Phase 3: Visual Components
-  assets/css/main.css             (styling)
-  header.html partial             (navigation)
-  footer.html partial             (footer)
-  language-switcher.html partial  (EN/IT toggle)
-
-Phase 4: Project Showcase
-  data/projects.toml              (project data)
-  project-card.html partial       (project display)
-
-Phase 5: Deployment
-  .github/workflows/hugo.yaml    (CI/CD pipeline)
-  static/CNAME                   (custom domain)
+/* ============================
+   11. Utilities (sr-only, etc.)
+   ============================ */
 ```
 
-This order works because each phase produces a functional (if incomplete) site. Phase 1 gives you a blank page that builds. Phase 2 gives you content. Phase 3 gives you design. Phase 4 gives you the actual project showcase. Phase 5 puts it on the internet.
+### Bento Grid CSS Pattern
+
+Use CSS Grid with `grid-template-areas` for explicit, readable layout control. This is the best approach for a fixed number of known cells (hero + 3 project cards + optional extras).
+
+```css
+/* ============================
+   Bento Grid System
+   ============================ */
+
+/* Desktop: 3 columns */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+}
+
+/* Hero spans full width */
+.bento-hero {
+  grid-column: 1 / -1;
+}
+
+/* Each project card occupies one column */
+.bento-project {
+  /* No explicit grid placement needed -- auto-placement fills columns */
+}
+
+/* Optional extra section spans full width or partial */
+.bento-extra {
+  grid-column: 1 / -1;
+}
+
+/* Tablet: 2 columns */
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Third project card spans full width on its own row */
+  .bento-project:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile: 1 column */
+@media (max-width: 480px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+**Why `grid-template-columns` over `grid-template-areas`:** For 3 equal project cards with a full-width hero, `repeat(3, 1fr)` with span overrides is simpler and more maintainable than named areas. Named areas become worthwhile only when cells have asymmetric sizes (e.g., one card spans 2 columns while another spans 1).
+
+**Alternative for visual variety:** If the design calls for mixed-size bento cells (e.g., one large featured project + two smaller ones), use:
+
+```css
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "hero    hero    hero"
+    "proj-1  proj-1  proj-2"
+    "proj-3  extra   extra";
+  gap: var(--space-md);
+}
+
+.bento-hero    { grid-area: hero; }
+.bento-project:nth-child(2) { grid-area: proj-1; }
+.bento-project:nth-child(3) { grid-area: proj-2; }
+.bento-project:nth-child(4) { grid-area: proj-3; }
+.bento-extra   { grid-area: extra; }
+```
+
+This is more "bento" in feel (uneven cells create visual interest) but requires careful responsive handling.
+
+## Dark/Light Mode Architecture
+
+### Current Problem
+
+The existing dark mode toggle works correctly but has architectural issues:
+
+1. **Design tokens are duplicated 4 times** -- light defaults in `:root`, dark in `@media (prefers-color-scheme: dark) :root`, dark in `#dark-toggle:checked + .page-wrapper`, and light-override in `@media (prefers-color-scheme: dark) { #dark-toggle:checked + .page-wrapper }`. The `.page-wrapper` selector inside the media query is also redundant (it duplicates `:root` values already set in the same block).
+
+2. **Muted text contrast is borderline** -- `#6b7280` on `#ffffff` gives a contrast ratio of 4.83:1. While this technically passes WCAG AA (minimum 4.5:1), it offers no safety margin. The PROJECT.md mentions "Fix light mode contrast" as an active requirement.
+
+3. **No CSS `color-scheme` declaration** -- The browser does not know the page is dark-aware, so native form elements, scrollbars, and user-agent styles do not adapt.
+
+### Recommended Dark/Light Architecture
+
+**Strategy:** Keep the CSS-only checkbox toggle (no JavaScript). Improve the token system to reduce duplication. Add `color-scheme` declaration. Strengthen contrast ratios.
+
+#### Step 1: Add `color-scheme` to `:root`
+
+```css
+:root {
+  color-scheme: light dark;
+}
+```
+
+This tells the browser the page supports both schemes. Native controls (scrollbars, form inputs, `<select>` elements) will adapt to match. This single line provides significant visual polish for free.
+
+#### Step 2: Consolidate Design Tokens (eliminate duplication)
+
+The current CSS defines the same dark palette in two places: `@media (prefers-color-scheme: dark) :root` AND `@media (prefers-color-scheme: dark) .page-wrapper`. The `.page-wrapper` duplication exists because the checkbox toggle targets `.page-wrapper` not `:root`.
+
+**Root cause:** The checkbox selector `#dark-toggle:checked + .page-wrapper` can only set properties on `.page-wrapper` and its descendants. It cannot modify `:root`. Therefore, all color references must resolve on `.page-wrapper`, not `:root`.
+
+**Revised approach:**
+
+```css
+/* Light tokens (default) */
+:root {
+  color-scheme: light dark;
+  /* Non-theme tokens (spacing, typography) */
+  --space-xs: 0.5rem;
+  /* ... */
+}
+
+/* Light theme colors on page-wrapper */
+.page-wrapper {
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-muted: #4b5563;  /* Darker than current #6b7280 for better contrast */
+  --color-border: #e5e7eb;
+  --color-link: #2563eb;
+  --color-link-hover: #1d4ed8;
+  --color-card-bg: #f9fafb;     /* Subtle card lift vs page bg */
+}
+
+/* Dark theme: OS preference */
+@media (prefers-color-scheme: dark) {
+  .page-wrapper {
+    --color-bg: #111827;
+    --color-text: #f3f4f6;
+    --color-text-muted: #d1d5db;  /* Brighter than current #9ca3af */
+    --color-border: #374151;
+    --color-link: #60a5fa;
+    --color-link-hover: #93bbfd;
+    --color-card-bg: #1f2937;
+  }
+}
+
+/* Toggle: override theme (light OS -> dark) */
+#dark-toggle:checked + .page-wrapper {
+  --color-bg: #111827;
+  --color-text: #f3f4f6;
+  --color-text-muted: #d1d5db;
+  --color-border: #374151;
+  --color-link: #60a5fa;
+  --color-link-hover: #93bbfd;
+  --color-card-bg: #1f2937;
+}
+
+/* Toggle: override theme (dark OS -> light) */
+@media (prefers-color-scheme: dark) {
+  #dark-toggle:checked + .page-wrapper {
+    --color-bg: #ffffff;
+    --color-text: #1a1a1a;
+    --color-text-muted: #4b5563;
+    --color-border: #e5e7eb;
+    --color-link: #2563eb;
+    --color-link-hover: #1d4ed8;
+    --color-card-bg: #f9fafb;
+  }
+}
+```
+
+This still has 4 blocks (inherent to the CSS-only checkbox approach), but each block now defines tokens on `.page-wrapper` only, eliminating the redundant `:root` dark block. The `@media (prefers-color-scheme: dark) :root` block is removed entirely.
+
+**Note:** The `light-dark()` CSS function (87% browser support) could reduce this to 2 blocks but CANNOT work with the checkbox toggle. `light-dark()` responds to `color-scheme` property changes, which would require JavaScript to toggle. Since the project constraint is zero JS, the checkbox + 4-block approach remains the correct architecture.
+
+#### Step 3: Strengthen Contrast Ratios
+
+Current vs proposed muted text colors:
+
+| Token | Current | Proposed | Contrast (light bg) | Contrast (dark bg) |
+|-------|---------|----------|---------------------|--------------------|
+| `--color-text-muted` (light) | `#6b7280` | `#4b5563` | 4.83:1 -> 7.41:1 | n/a |
+| `--color-text-muted` (dark) | `#9ca3af` | `#d1d5db` | n/a | 6.99:1 -> 11.55:1 |
+
+Both proposed values exceed WCAG AA (4.5:1) and approach AAA (7:1).
+
+#### Step 4: Bento Card Surfaces
+
+For bento grid layouts, cards need visual distinction from the background. The current design uses identical card-bg and page-bg in light mode (`#ffffff` both). This works for bordered cards but fails for a bento aesthetic where cards should feel like distinct surfaces.
+
+**Recommendation:**
+- Light mode: `--color-card-bg: #f9fafb` (very subtle gray lift) or keep `#ffffff` with border emphasis
+- Dark mode: `--color-card-bg: #1f2937` (already distinct from `#111827` background) -- this is good
+- Add `--color-card-border: var(--color-border)` for explicit border control
+- Consider `border-radius: 1rem` for bento cells (larger radius = more bento feel)
+
+## Template Architecture
+
+### baseof.html Changes
+
+```html
+<!-- BEFORE -->
+<main>
+  {{ block "main" . }}{{ end }}
+</main>
+
+<!-- AFTER -->
+<main class="bento-grid">
+  {{ block "main" . }}{{ end }}
+</main>
+```
+
+Minimal change. The `bento-grid` class on `<main>` activates the CSS grid. The block structure remains identical.
+
+**Alternative:** Keep `<main>` clean and add a wrapper `<div class="bento-grid">` inside the block in `index.html`. This is better if other page types (404, future pages) should NOT use the bento grid. Since this is a single-page site, putting it on `<main>` is simpler.
+
+### index.html Restructure
+
+```html
+{{ define "main" }}
+<section class="bento-cell bento-hero">
+  <h1 class="page-title">{{ .Title }}</h1>
+  <p class="tagline">{{ T "tagline" }}</p>
+</section>
+
+{{ range .Site.Data.projects.project }}
+<article class="bento-cell bento-project">
+  {{ if .logo }}
+  <img src="{{ .logo }}" alt="" class="project-logo" loading="lazy" width="48" height="48">
+  {{ end }}
+  <h2>{{ .name }}</h2>
+  <p>{{ index .description site.Language.Lang }}</p>
+  <a href="{{ .url }}" class="card-link">
+    <span class="sr-only">{{ T "viewProject" }}: </span>{{ .name }}
+  </a>
+</article>
+{{ end }}
+{{ end }}
+```
+
+**Key changes:**
+1. Removed the wrapping `<section class="project-cards">` -- bento cells are now direct children of the grid container (`<main class="bento-grid">`).
+2. Each `<article>` gets `bento-cell bento-project` classes.
+3. Hero section gets `bento-cell bento-hero` classes.
+4. The `project-card` class is renamed to `bento-project` for consistency.
+
+### Optional: Extract Project Card Partial
+
+For a 3-project site, extracting a partial is optional but improves readability if project cards become complex (e.g., adding status badges, tech tags):
+
+```html
+<!-- layouts/partials/project-card.html -->
+<!-- Receives a project data object as context -->
+<article class="bento-cell bento-project">
+  {{ if .logo }}
+  <img src="{{ .logo }}" alt="" class="project-logo" loading="lazy" width="48" height="48">
+  {{ end }}
+  <h2>{{ .name }}</h2>
+  <p>{{ index .description site.Language.Lang }}</p>
+  <a href="{{ .url }}" class="card-link">
+    <span class="sr-only">{{ T "viewProject" }}: </span>{{ .name }}
+  </a>
+</article>
+```
+
+Called as:
+```html
+{{ range .Site.Data.projects.project }}
+  {{ partial "project-card.html" . }}
+{{ end }}
+```
+
+**Recommendation:** Do NOT extract a partial for v1.1. The template is 10 lines. Extract only if card complexity grows in a future milestone.
+
+## Responsive Breakpoint Strategy
+
+### Recommended Breakpoints
+
+| Breakpoint | Columns | Layout Description |
+|------------|---------|-------------------|
+| >= 769px (desktop) | 3 columns | Hero spans 3. Each project card in its own column. |
+| 481px - 768px (tablet) | 2 columns | Hero spans 2. Two projects side by side, third spans full width. |
+| <= 480px (mobile) | 1 column | Everything stacks vertically. |
+
+### Why These Breakpoints
+
+- **768px** is the standard tablet breakpoint (iPad portrait). 3 project cards at 768px would be ~230px each after gap, which is too narrow for readable card content.
+- **480px** captures most phones in portrait. Below this, 2 columns would mean ~220px per card, which is too cramped.
+- The `--max-width: 680px` constraint in the current CSS MUST be widened. A 3-column bento grid at 680px gives ~210px per column, which is too narrow. **Change `--max-width` to `960px` or `1080px`** for the bento layout to breathe.
+
+### Page Wrapper Width Change
+
+```css
+/* BEFORE */
+:root {
+  --max-width: 680px;
+}
+
+/* AFTER */
+:root {
+  --max-width: 1080px;  /* or 960px for tighter feel */
+}
+```
+
+This is a critical layout change. The current 680px max-width was designed for a single-column reading experience. The bento grid needs horizontal space for 3 columns. 1080px provides ~340px per column at desktop, which is comfortable for card content.
+
+## Patterns to Follow
+
+### Pattern 1: BEM-lite Class Naming for Bento
+
+**What:** Use `bento-` prefix for all grid-related classes. Avoid deep nesting.
+
+**Classes:**
+```
+.bento-grid      (the grid container)
+.bento-cell      (shared cell styles: border-radius, padding, background)
+.bento-hero      (hero cell variant)
+.bento-project   (project card cell variant)
+.bento-extra     (optional extra sections)
+```
+
+**Why:** Flat selectors are fast, readable, and easy to override. Avoid `.bento-grid > .bento-cell > .bento-cell__content` type nesting -- this is a small site, not a design system.
+
+### Pattern 2: Full-Bleed Page Wrapper with Grid Content
+
+**What:** The `.page-wrapper` provides full-width background color while `.bento-grid` constrains content width.
+
+```css
+.page-wrapper {
+  /* Remove max-width here -- let it fill the viewport */
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.bento-grid {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  /* ... */
+}
+```
+
+**Why:** On wide screens, the background color should extend edge-to-edge while the bento content stays centered. Moving `max-width` from `.page-wrapper` to `.bento-grid` (or keeping it on `.page-wrapper` but widening it) achieves this.
+
+### Pattern 3: Clickable Card with Overlay Link
+
+**What:** The current `card-link::after` with `position: absolute; inset: 0;` overlay is already implemented. Keep it for the bento redesign.
+
+**Why:** Makes the entire card clickable without JavaScript. Requires `position: relative` on the card container.
+
+## Anti-Patterns to Avoid
+
+### Anti-Pattern 1: Using JavaScript for the Grid Layout
+
+**What:** Adding a JS library (Masonry, Isotope) for the bento grid.
+
+**Why bad:** Violates the zero-JS constraint. CSS Grid handles this layout natively. JS-based grids are for dynamic, unknown-size content (photo galleries). This site has exactly 3 known project cards.
+
+**Instead:** Pure CSS Grid with `grid-template-columns` and media queries.
+
+### Anti-Pattern 2: Container Queries for This Use Case
+
+**What:** Using `@container` queries instead of `@media` queries for responsive bento cells.
+
+**Why bad for this project:** Container queries are useful when components appear in different container contexts (sidebar vs main content). This site has one context: the full page. Container queries would add complexity for zero benefit. Browser support is also lower (88%) than media queries (100%).
+
+**Instead:** Standard `@media` breakpoints. Simple, universal, sufficient.
+
+### Anti-Pattern 3: Converting to SCSS for "Organization"
+
+**What:** Converting `main.css` to `main.scss` to use variables, nesting, or partials.
+
+**Why bad for this project:** The CSS is under 500 lines. CSS custom properties already provide variables. Native CSS nesting (91% support) provides nesting. SCSS partials/imports add file management overhead disproportionate to this codebase size. The Dart Sass build step is already installed in CI but would be an unnecessary processing step.
+
+**Instead:** Stay with plain CSS. Use section comments for organization. Use custom properties for tokens.
+
+### Anti-Pattern 4: Animated Grid Transitions
+
+**What:** Adding `transition` on `grid-template-columns` or animating grid item positions on resize.
+
+**Why bad:** CSS grid transitions have inconsistent browser support. On mobile, they cause layout thrashing during scroll/resize. They serve no functional purpose on a landing page.
+
+**Instead:** Instant layout shifts on breakpoint changes. Use subtle transitions only on hover states (border-color, box-shadow).
+
+## Build Order for the Redesign
+
+Dependencies flow top-to-bottom. Each step produces a functional intermediate state.
+
+```
+Step 1: Design Tokens Update
+  Modify: assets/css/main.css (tokens section only)
+  - Widen --max-width to 1080px
+  - Add color-scheme: light dark
+  - Strengthen --color-text-muted values
+  - Add --color-card-bg differentiation
+  - Update dark mode token blocks
+  Result: Existing layout still works, just with better contrast
+
+Step 2: Bento Grid CSS
+  Modify: assets/css/main.css (add grid section)
+  - Add .bento-grid display:grid rules
+  - Add .bento-cell shared card styles
+  - Add .bento-hero, .bento-project, .bento-extra variants
+  - Add responsive breakpoints (768px, 480px)
+  Result: Grid styles ready, but not yet applied (no HTML changes)
+
+Step 3: Template Restructure
+  Modify: layouts/_default/baseof.html (add class to <main>)
+  Modify: layouts/index.html (restructure into bento cells)
+  Result: Bento layout is live. Old .project-cards styles can be removed.
+
+Step 4: Polish
+  Modify: assets/css/main.css (remove old styles, refine)
+  - Remove .project-cards, .project-card class definitions
+  - Fine-tune card padding, border-radius, hover effects
+  - Verify dark mode toggle still works end-to-end
+  Result: Clean, final bento grid with proper theming
+
+Step 5: Optional Extras
+  Modify: layouts/index.html (add extra bento sections)
+  Modify: assets/css/main.css (style extra sections)
+  - Add tech stack section, GitHub link, or other bento cells
+  - Only if design warrants -- do not add for the sake of filling space
+  Result: Complete bento grid with optional supplementary content
+```
+
+**Step ordering rationale:**
+- Tokens first because they are non-breaking (the old layout renders fine with updated tokens).
+- CSS before templates because you can write and verify grid styles in isolation using browser devtools before committing HTML changes.
+- Template changes third because they activate the grid. Doing templates before CSS would break the layout.
+- Polish last because cleanup requires seeing the final result.
+
+## Integration Risks
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Dark mode toggle breaks after restructure | HIGH -- toggle is the only interactive element | Test `#dark-toggle:checked + .page-wrapper` selector chain in every step. The checkbox must remain a direct sibling of `.page-wrapper`. |
+| Cards too narrow at 3-column desktop | MEDIUM -- readability degrades | Increase `--max-width` from 680px to 1080px. Test at 1024px viewport. |
+| Logo images break bento card layout | LOW -- logos are external URLs | Current logos are 48x48 SVGs with `object-fit: contain`. These will work in any card size. |
+| Responsive breakpoints feel wrong | LOW -- subjective | Test at common device widths (375, 414, 768, 1024, 1440). Adjust breakpoints based on content, not arbitrary device sizes. |
 
 ## Sources
 
-- [Hugo Multilingual Mode](https://gohugo.io/content-management/multilingual/) -- Official docs on translation by filename/directory, language configuration, translation linking (HIGH confidence)
-- [Hugo Directory Structure](https://gohugo.io/getting-started/directory-structure/) -- Official docs on standard directories (HIGH confidence)
-- [Hugo Template Types](https://gohugo.io/templates/types/) -- Official docs on base, home, single, list, partial templates (HIGH confidence)
-- [Hugo Template Lookup Order](https://gohugo.io/templates/lookup-order/) -- How Hugo resolves which template to use (HIGH confidence)
-- [Hugo lang.Translate](https://gohugo.io/functions/lang/translate/) -- i18n function, file format, pluralization (HIGH confidence)
-- [Hugo Pipes Introduction](https://gohugo.io/hugo-pipes/introduction/) -- Asset processing pipeline (HIGH confidence)
-- [Hugo Data Templates](https://gohugo.io/templates/data-templates/) -- data/ directory and .Site.Data access (HIGH confidence)
-- [Host on GitHub Pages](https://gohugo.io/host-and-deploy/host-on-github-pages/) -- GitHub Actions workflow for Hugo deployment (HIGH confidence)
-- [Hugo Multilingual Part 1 (Regis Philibert)](https://www.regisphilibert.com/blog/2018/08/hugo-multilingual-part-1-managing-content-translation/) -- Community comparison of translation approaches (MEDIUM confidence)
-- [CloudCannon Translation Guides](https://cloudcannon.com/documentation/developer-guides/hugo-multilingual/translation-by-filename/) -- Practical examples of both approaches (MEDIUM confidence)
+- [CSS Grid bento layout patterns (iamsteve.me)](https://iamsteve.me/blog/bento-layout-css-grid) -- grid-template-columns, auto-flow dense, responsive spans (MEDIUM confidence)
+- [Bento box CSS Grid tutorial (codemotion.com)](https://www.codemotion.com/magazine/frontend/lets-create-a-bento-box-design-layout-using-modern-css/) -- grid-template-areas approach, aspect-ratio patterns (MEDIUM confidence)
+- [CSS light-dark() function (css-tricks.com)](https://css-tricks.com/come-to-the-light-dark-side/) -- 87% browser support, requires color-scheme property, cannot work with checkbox toggle (MEDIUM confidence)
+- [light-dark() browser support (caniuse.com)](https://caniuse.com/mdn-css_types_color_light-dark) -- 84.93% global support, Chrome 123+, Firefox 120+, Safari 17.5+ (HIGH confidence)
+- [CSS Nesting browser support (caniuse.com)](https://caniuse.com/css-nesting) -- 91% global support (HIGH confidence)
+- [WCAG 2.2 contrast requirements (makethingsaccessible.com)](https://www.makethingsaccessible.com/guides/contrast-requirements-for-wcag-2-2-level-aa/) -- 4.5:1 normal text, 3:1 large text (HIGH confidence)
+- [Hugo Pipes asset processing (gohugo.io)](https://gohugo.io/hugo-pipes/introduction/) -- resources.Get, Minify, Fingerprint (HIGH confidence)
+- [Hugo SCSS transpilation (gohugo.io)](https://gohugo.io/hugo-pipes/transpile-sass-to-css/) -- Dart Sass integration, toCSS function (HIGH confidence)
+- [prefers-color-scheme (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme) -- OS-level dark mode detection (HIGH confidence)
+- [Dark mode complete guide (css-tricks.com)](https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web/) -- checkbox toggle approach, color-scheme meta tag (MEDIUM confidence)
+- [WeAreDevs bento grid tutorial](https://www.wearedevelopers.com/en/magazine/682/building-a-bento-grid-layout-with-modern-css-grid-682) -- Modern CSS grid bento patterns (MEDIUM confidence)
 
 ---
-*Architecture research for: Hugo multilingual landing page (toto-castaldi.com)*
-*Researched: 2026-02-17*
+*Architecture research for: v1.1 Bento Grid Redesign (toto-castaldi.com)*
+*Researched: 2026-02-19*

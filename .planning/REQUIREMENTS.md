@@ -60,27 +60,27 @@ Requirements for the bento grid restyling milestone. Each maps to roadmap phases
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LAYOUT-01 | — | Pending |
-| LAYOUT-02 | — | Pending |
-| LAYOUT-03 | — | Pending |
-| LAYOUT-04 | — | Pending |
-| LAYOUT-05 | — | Pending |
-| THEME-01 | — | Pending |
-| THEME-02 | — | Pending |
-| THEME-03 | — | Pending |
-| THEME-04 | — | Pending |
-| THEME-05 | — | Pending |
-| STYLE-01 | — | Pending |
-| STYLE-02 | — | Pending |
-| STYLE-03 | — | Pending |
-| STYLE-04 | — | Pending |
-| STYLE-05 | — | Pending |
+| LAYOUT-01 | Phase 5 | Pending |
+| LAYOUT-02 | Phase 5 | Pending |
+| LAYOUT-03 | Phase 5 | Pending |
+| LAYOUT-04 | Phase 4 | Pending |
+| LAYOUT-05 | Phase 6 | Pending |
+| THEME-01 | Phase 4 | Pending |
+| THEME-02 | Phase 4 | Pending |
+| THEME-03 | Phase 4 | Pending |
+| THEME-04 | Phase 4 | Pending |
+| THEME-05 | Phase 4 | Pending |
+| STYLE-01 | Phase 5 | Pending |
+| STYLE-02 | Phase 6 | Pending |
+| STYLE-03 | Phase 6 | Pending |
+| STYLE-04 | Phase 5 | Pending |
+| STYLE-05 | Phase 4 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15
+- Mapped to phases: 15
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-19*
-*Last updated: 2026-02-19 after initial definition*
+*Last updated: 2026-02-19 after roadmap creation*

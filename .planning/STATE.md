@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** Phase 5 - Bento Grid Layout
+**Current focus:** Phase 6 - Visual Polish and Extras (COMPLETE)
 
 ## Current Position
 
-Phase: 5 of 6 (Bento Grid Layout)
+Phase: 6 of 6 (Visual Polish and Extras)
 Plan: 1 of 1 in current phase (COMPLETE)
-Status: Phase 5 complete
-Last activity: 2026-02-19 -- Executed 05-01 bento grid layout
+Status: Phase 6 complete -- v1.1 milestone complete
+Last activity: 2026-02-19 -- Executed 06-01 visual polish and extras
 
-Progress: [#########░] 83% (5/6 phases complete across all milestones)
+Progress: [##########] 100% (6/6 phases complete across all milestones)
 
 ## Performance Metrics
 
@@ -24,8 +24,8 @@ Progress: [#########░] 83% (5/6 phases complete across all milestones)
 - Execution time: 0.43 hours
 
 **v1.1:**
-- Plans completed: 2
-- Execution time: 3 min
+- Plans completed: 3
+- Execution time: 4 min
 
 ## Accumulated Context
 
@@ -41,6 +41,8 @@ Recent decisions affecting current work:
 - v1.1: Separate page-wrapper (full-width bg) from container (content constraint)
 - v1.1: Explicit repeat(N, 1fr) over auto-fit/auto-fill for deterministic 3-item layout
 - v1.1: 0.75rem card radius via --radius-card token (up from hardcoded 0.5rem)
+- v1.1: Inline SVG for GitHub icon (fill=currentColor for theme, no external dependency)
+- v1.1: Reusable .bento-cell class separate from .project-card for future bento sections
 
 ### Pending Todos
 
@@ -55,5 +57,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 05-01-PLAN.md (Bento Grid Layout)
+Stopped at: Completed 06-01-PLAN.md (Visual Polish and Extras) -- v1.1 milestone complete
 Resume file: None

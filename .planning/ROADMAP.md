@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** -- Phases 1-3 (shipped 2026-02-19)
-- **v1.1 Restyling Bento Grid** -- Phases 4-6 (in progress)
+- ✅ **v1.1 Restyling Bento Grid** -- Phases 4-6 (shipped 2026-02-19)
 
 ## Phases
 
@@ -18,9 +18,9 @@
 
 ### v1.1 Restyling Bento Grid
 
-- [ ] **Phase 4: Design Tokens and Container** - Fix WCAG AA contrast in both themes, widen container to support 3-column grid
-- [ ] **Phase 5: Bento Grid Layout** - CSS Grid with responsive breakpoints, template restructure into bento cells
-- [ ] **Phase 6: Visual Polish and Extras** - Card depth, hover effects, additional bento sections
+- [x] **Phase 4: Design Tokens and Container** - Fix WCAG AA contrast in both themes, widen container to support 3-column grid
+- [x] **Phase 5: Bento Grid Layout** - CSS Grid with responsive breakpoints, template restructure into bento cells
+- [x] **Phase 6: Visual Polish and Extras** - Card depth, hover effects, additional bento sections
 
 ## Phase Details
 
@@ -37,7 +37,7 @@
 **Plans:** 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md -- WCAG AA contrast tokens + container restructure
+- [x] 04-01-PLAN.md -- WCAG AA contrast tokens + container restructure
 
 ### Phase 5: Bento Grid Layout
 **Goal**: Landing page displays project cards in a responsive bento grid that adapts from 3 columns (desktop) to 1 column (mobile)
@@ -52,7 +52,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 05-01-PLAN.md -- Responsive grid columns + border-radius token + typography verification
+- [x] 05-01-PLAN.md -- Responsive grid columns + border-radius token + typography verification
 
 ### Phase 6: Visual Polish and Extras
 **Goal**: Cards have depth and interactivity, and the page includes additional bento sections beyond project cards
@@ -65,7 +65,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md -- Card shadow tokens, hover effects, GitHub profile bento section
+- [x] 06-01-PLAN.md -- Card shadow tokens, hover effects, GitHub profile bento section
 
 ## Progress
 
@@ -76,6 +76,6 @@ Plans:
 | 1. Foundation and Deploy Pipeline | v1.0 | 2/2 | Complete | 2026-02-18 |
 | 2. Bilingual Site with Design | v1.0 | 3/3 | Complete | 2026-02-18 |
 | 3. SEO and Production Polish | v1.0 | 1/1 | Complete | 2026-02-18 |
-| 4. Design Tokens and Container | v1.1 | 0/? | Not started | - |
-| 5. Bento Grid Layout | v1.1 | 0/? | Not started | - |
-| 6. Visual Polish and Extras | v1.1 | 0/? | Not started | - |
+| 4. Design Tokens and Container | v1.1 | 1/1 | Complete | 2026-02-19 |
+| 5. Bento Grid Layout | v1.1 | 1/1 | Complete | 2026-02-19 |
+| 6. Visual Polish and Extras | v1.1 | 1/1 | Complete | 2026-02-19 |

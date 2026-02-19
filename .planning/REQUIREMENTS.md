@@ -13,7 +13,7 @@ Requirements for the bento grid restyling milestone. Each maps to roadmap phases
 - [x] **LAYOUT-02**: Grid adapts to 2 columns on tablet (481-1024px)
 - [x] **LAYOUT-03**: Grid adapts to 1 column on mobile (<=480px)
 - [x] **LAYOUT-04**: Container max-width increases from 680px to ~1080px
-- [ ] **LAYOUT-05**: Additional bento sections beyond project cards (tech stack, GitHub link, or similar)
+- [x] **LAYOUT-05**: Additional bento sections beyond project cards (tech stack, GitHub link, or similar)
 
 ### Theme
 
@@ -26,8 +26,8 @@ Requirements for the bento grid restyling milestone. Each maps to roadmap phases
 ### Styling
 
 - [x] **STYLE-01**: Cards with rounded corners (border-radius)
-- [ ] **STYLE-02**: Cards with shadows/depth in light mode
-- [ ] **STYLE-03**: Hover effects on project cards
+- [x] **STYLE-02**: Cards with shadows/depth in light mode
+- [x] **STYLE-03**: Hover effects on project cards
 - [x] **STYLE-04**: Consistent typography with modular scale
 - [x] **STYLE-05**: Off-white page background in light mode to differentiate cards
 
@@ -64,15 +64,15 @@ Requirements for the bento grid restyling milestone. Each maps to roadmap phases
 | LAYOUT-02 | Phase 5 | Complete |
 | LAYOUT-03 | Phase 5 | Complete |
 | LAYOUT-04 | Phase 4 | Complete |
-| LAYOUT-05 | Phase 6 | Pending |
+| LAYOUT-05 | Phase 6 | Complete |
 | THEME-01 | Phase 4 | Complete |
 | THEME-02 | Phase 4 | Complete |
 | THEME-03 | Phase 4 | Complete |
 | THEME-04 | Phase 4 | Complete |
 | THEME-05 | Phase 4 | Complete |
 | STYLE-01 | Phase 5 | Complete |
-| STYLE-02 | Phase 6 | Pending |
-| STYLE-03 | Phase 6 | Pending |
+| STYLE-02 | Phase 6 | Complete |
+| STYLE-03 | Phase 6 | Complete |
 | STYLE-04 | Phase 5 | Complete |
 | STYLE-05 | Phase 4 | Complete |
 

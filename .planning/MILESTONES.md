@@ -15,3 +15,18 @@
 
 ---
 
+
+## v1.1 Restyling Bento Grid (Shipped: 2026-02-19)
+
+**Phases completed:** 3 phases (4-6), 3 plans, 6 tasks | 21 files changed, +2248/-89 | 489 LOC
+**Git range:** 9e1fde3..3eaa104
+
+**Key accomplishments:**
+- WCAG AA color tokens in both themes (text 4.5:1+, border 3:1+) with Tailwind Slate palette
+- Off-white/white card distinction and 1080px container for bento grid
+- Responsive CSS Grid: 3 columns desktop, 2 tablet, 1 mobile with design tokens
+- Shadow depth tokens and accessible hover effects with prefers-reduced-motion guard
+- GitHub profile bento section with inline SVG and bilingual i18n support
+
+---
+

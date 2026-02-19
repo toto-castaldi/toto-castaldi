@@ -62,7 +62,10 @@ Plans:
   1. Project cards show shadow/depth in light mode and elevation change on hover
   2. Hover effects are visible and smooth, disabled when user prefers reduced motion
   3. At least one additional bento section exists beyond project cards (tech stack, GitHub link, or similar)
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md -- Card shadow tokens, hover effects, GitHub profile bento section
 
 ## Progress
 

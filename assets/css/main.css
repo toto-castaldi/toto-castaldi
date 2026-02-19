@@ -113,12 +113,15 @@ body {
 }
 
 .page-wrapper {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-md);
   color: var(--color-text);
   background: var(--color-bg);
   min-height: 100vh;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
 }
 
 h1 {

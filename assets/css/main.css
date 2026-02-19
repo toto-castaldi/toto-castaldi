@@ -334,6 +334,52 @@ img {
   #dark-toggle:checked + .page-wrapper .toggle-icon--light { display: inline; }
 }
 
+/* ============================================
+   Bento Extras Section
+   ============================================ */
+.bento-extras {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  padding: var(--space-md) 0;
+  margin-top: var(--space-lg);
+}
+
+.bento-cell {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  transition: border-color 0.15s ease;
+}
+
+.bento-cell:hover {
+  border-color: var(--color-link);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bento-cell {
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+  }
+
+  .bento-cell:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+.bento-icon {
+  flex-shrink: 0;
+}
+
 /* Screen Reader Only Utility */
 .sr-only {
   position: absolute;

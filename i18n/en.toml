@@ -12,3 +12,9 @@ other = "Visit project"
 
 [darkModeToggle]
 other = "Toggle dark mode"
+
+[githubProfile]
+other = "GitHub"
+
+[extras]
+other = "Links"

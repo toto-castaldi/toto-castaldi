@@ -46,6 +46,10 @@
   /* Layout */
   --max-width: 1080px;
   --radius-card: 0.75rem;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08),
+                 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.1),
+                       0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 /* ============================================
@@ -60,6 +64,8 @@
     --color-link: #60a5fa;
     --color-link-hover: #93bbfd;
     --color-card-bg: #1e293b;
+    --shadow-card: none;
+    --shadow-card-hover: none;
   }
 
   .page-wrapper {
@@ -70,6 +76,8 @@
     --color-link: #60a5fa;
     --color-link-hover: #93bbfd;
     --color-card-bg: #1e293b;
+    --shadow-card: none;
+    --shadow-card-hover: none;
   }
 }
 
@@ -84,6 +92,8 @@
   --color-link: #60a5fa;
   --color-link-hover: #93bbfd;
   --color-card-bg: #1e293b;
+  --shadow-card: none;
+  --shadow-card-hover: none;
 }
 
 /* ============================================
@@ -98,6 +108,10 @@
     --color-link: #2563eb;
     --color-link-hover: #1d4ed8;
     --color-card-bg: #ffffff;
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08),
+                   0 4px 12px rgba(0, 0, 0, 0.04);
+    --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.1),
+                         0 8px 24px rgba(0, 0, 0, 0.08);
   }
 }
 
@@ -214,11 +228,25 @@ img {
   border-radius: var(--radius-card);
   padding: var(--space-lg);
   background: var(--color-card-bg);
+  box-shadow: var(--shadow-card);
   transition: border-color 0.15s ease;
 }
 
 .project-card:hover {
   border-color: var(--color-link);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .project-card {
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+  }
+
+  .project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+  }
 }
 
 /* Project Logo */

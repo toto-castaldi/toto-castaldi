@@ -49,7 +49,10 @@ Plans:
   3. Mobile viewport (<=480px) shows 1 column with stacked cards
   4. Cards have rounded corners and consistent typography across all breakpoints
   5. Dark mode toggle still works after template restructure (no sibling selector breakage)
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 05-01-PLAN.md -- Responsive grid columns + border-radius token + typography verification
 
 ### Phase 6: Visual Polish and Extras
 **Goal**: Cards have depth and interactivity, and the page includes additional bento sections beyond project cards

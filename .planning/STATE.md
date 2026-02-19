@@ -5,15 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-19)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** v1.0 shipped. Planning next milestone.
+**Current focus:** v1.1 Restyling Bento Grid
 
 ## Current Position
 
-Milestone: v1.0 MVP -- SHIPPED 2026-02-19
-Status: Complete
-Last activity: 2026-02-19 -- Milestone archived, HTTPS enabled
-
-Progress: [##########] 100%
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-19 — Milestone v1.1 started
 
 ## Performance Metrics
 
@@ -34,10 +33,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- all v1.0 concerns resolved.
+- Light mode contrast fails WCAG AA — primary driver for redesign.
 
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: v1.0 milestone archived
-Resume file: .planning/MILESTONES.md
+Stopped at: Milestone v1.1 started, defining requirements
+Resume file: .planning/PROJECT.md

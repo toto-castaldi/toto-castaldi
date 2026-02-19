@@ -21,7 +21,21 @@ Visitors can immediately see what projects exist and navigate to each one — in
 
 ### Active
 
-(None — next milestone requirements TBD)
+- [ ] Complete visual redesign with bento grid layout
+- [ ] 3-column responsive project card grid (desktop → tablet → mobile)
+- [ ] Dark + light mode both legible, with working toggle
+- [ ] Fix light mode contrast (WCAG AA compliance)
+- [ ] Additional bento sections where design warrants (tech stack, GitHub, etc.)
+
+## Current Milestone: v1.1 Restyling Bento Grid
+
+**Goal:** Redesign the landing page with a modern bento grid layout, proper responsive behavior, and legible dark/light themes.
+
+**Target features:**
+- Bento grid layout with 3-column project cards on desktop
+- Responsive design that adapts from mobile to desktop
+- Dark + light mode both meeting WCAG AA contrast
+- Optional extra bento sections (tech stack, links, etc.)
 
 ### Out of Scope
 
@@ -41,7 +55,7 @@ HTTPS live with Let's Encrypt. System font stack for zero network requests.
 - **Stack**: Hugo static site generator — user preference
 - **Hosting**: GitHub Pages — free, integrated with repo
 - **Languages**: Italian and English — both required from day one
-- **Design**: Minimal and clean — whitespace-heavy, strong typography, little color
+- **Design**: Bento grid, modern, responsive — dark + light mode both legible
 - **Performance**: Zero JavaScript, sub-1s load
 
 ## Key Decisions
@@ -58,4 +72,4 @@ HTTPS live with Let's Encrypt. System font stack for zero network requests.
 | .AllTranslations for hreflang | Includes self-reference as required by Google | ✓ Good |
 
 ---
-*Last updated: 2026-02-19 after v1.0 milestone*
+*Last updated: 2026-02-19 after v1.1 milestone start*

@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rimozione Helix
 status: Awaiting next milestone
-stopped_at: v1.2 roadmap created (Phase 7)
+stopped_at: v1.2 shipped and archived
 last_updated: "2026-07-19T09:02:17.299Z"
 last_activity: 2026-07-19 — Milestone v1.2 completed and archived
 progress:

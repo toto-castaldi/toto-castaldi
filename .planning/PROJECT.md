@@ -33,11 +33,12 @@ Visitors can immediately see what projects exist and navigate to each one — in
 - ✓ Dark + light mode both legible with WCAG AA contrast — v1.1
 - ✓ Light mode border/text contrast fixed to WCAG AA — v1.1
 - ✓ Additional bento sections: GitHub profile link — v1.1
+- ✓ Helix rimosso dal sito (dati, contenuti IT/EN, card) — Validated in Phase 7: Helix Removal and Two-Column Layout (v1.2)
+- ✓ Griglia progetti a 2 colonne desktop con GitHub profile a tutta larghezza sotto — Validated in Phase 7 (v1.2)
 
 ### Active
 
-- [ ] Helix rimosso dal sito (dati, contenuti IT/EN, card)
-- [ ] Griglia progetti a 2 colonne desktop con GitHub profile a tutta larghezza sotto
+(nessuno — tutti i requisiti v1.2 validati)
 
 ### Out of Scope
 
@@ -55,8 +56,9 @@ Shipped v1.1 with 489 LOC (394 CSS, 55 templates, 40 i18n TOML).
 Tech stack: Hugo Extended 0.155.3, Dart Sass, GitHub Actions, GitHub Pages.
 HTTPS live with Let's Encrypt. System font stack for zero network requests.
 CSS custom properties for design tokens (colors, spacing, typography, shadows, radius).
-Responsive bento grid: 3 columns desktop, 2 tablet, 1 mobile.
+Responsive bento grid: 2 columns desktop/tablet (Docora, Lumio), 1 mobile; GitHub card full width.
 WCAG AA contrast verified in both light and dark themes.
+Phase 7 complete (2026-07-19) — Helix removed everywhere, grid reflowed to 2 columns, human sign-off received.
 
 ## Constraints
 
@@ -105,4 +107,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-19 — started milestone v1.2 Rimozione Helix*
+*Last updated: 2026-07-19 — Phase 7 complete: Helix removed, 2-column grid shipped*

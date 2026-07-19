@@ -88,6 +88,10 @@ None - no external service configuration required.
 - Data and content are now two-project; plan 07-02 can reflow the bento grid to a two-column desktop layout with the GitHub profile card full-width below.
 - Note (pre-existing blocker, out of scope): helix.toto-castaldi.com subdomain redirect/teardown is not handled in this repo.
 
+## Self-Check: PASSED
+
+All modified files present and all task/doc commits (`80a6d32`, `6ab8a7e`, `c8b2900`) verified in git history.
+
 ---
 *Phase: 07-helix-removal-and-two-column-layout*
 *Completed: 2026-07-19*

@@ -9,14 +9,14 @@ Requirements for the Helix removal milestone. Each maps to roadmap phases.
 
 ### Content
 
-- [ ] **CONT-07**: Il progetto Helix non appare più nel sito (card, dati e contenuti IT/EN rimossi)
-- [ ] **CONT-08**: Nessun riferimento residuo a Helix in i18n, SEO/meta o template
+- [x] **CONT-07**: Il progetto Helix non appare più nel sito (card, dati e contenuti IT/EN rimossi)
+- [x] **CONT-08**: Nessun riferimento residuo a Helix in i18n, SEO/meta o template
 
 ### Layout
 
-- [ ] **LAYOUT-06**: Griglia progetti a 2 colonne su desktop (Docora, Lumio)
-- [ ] **LAYOUT-07**: Card GitHub profile a tutta larghezza sotto i progetti su desktop
-- [ ] **LAYOUT-08**: Responsive senza regressioni: 1 colonna su mobile, contrasto WCAG AA invariato in entrambi i temi
+- [x] **LAYOUT-06**: Griglia progetti a 2 colonne su desktop (Docora, Lumio)
+- [x] **LAYOUT-07**: Card GitHub profile a tutta larghezza sotto i progetti su desktop
+- [x] **LAYOUT-08**: Responsive senza regressioni: 1 colonna su mobile, contrasto WCAG AA invariato in entrambi i temi
 
 ## Future Requirements
 
@@ -32,11 +32,11 @@ Requirements for the Helix removal milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONT-07 | Phase 7 | Pending |
-| CONT-08 | Phase 7 | Pending |
-| LAYOUT-06 | Phase 7 | Pending |
-| LAYOUT-07 | Phase 7 | Pending |
-| LAYOUT-08 | Phase 7 | Pending |
+| CONT-07 | Phase 7 | Complete |
+| CONT-08 | Phase 7 | Complete |
+| LAYOUT-06 | Phase 7 | Complete |
+| LAYOUT-07 | Phase 7 | Complete |
+| LAYOUT-08 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 5 total

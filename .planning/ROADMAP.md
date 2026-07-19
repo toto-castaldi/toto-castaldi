@@ -42,7 +42,11 @@
   3. On desktop, the two project cards display side by side in a 2-column grid
   4. The GitHub profile card spans full width directly below the project cards on desktop
   5. On mobile all cards stack in a single column, and text/border contrast still meets WCAG AA in both light and dark themes
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 07-01-PLAN.md — Remove Helix from data, content descriptions, and repo docs
+- [ ] 07-02-PLAN.md — Reflow project grid to 2 columns on desktop (GitHub card full-width below)
+- [ ] 07-03-PLAN.md — Human-verify layout, language, and WCAG AA contrast
 **UI hint**: yes
 
 ## Progress
@@ -55,4 +59,4 @@
 | 4. Design Tokens and Container | v1.1 | 1/1 | Complete | 2026-02-19 |
 | 5. Bento Grid Layout | v1.1 | 1/1 | Complete | 2026-02-19 |
 | 6. Visual Polish and Extras | v1.1 | 1/1 | Complete | 2026-02-19 |
-| 7. Helix Removal and Two-Column Layout | v1.2 | 0/0 | Not started | - |
+| 7. Helix Removal and Two-Column Layout | v1.2 | 0/3 | Planned | - |

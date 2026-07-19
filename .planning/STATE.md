@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rimozione Helix
-status: executing
-stopped_at: v1.2 roadmap created (Phase 7)
-last_updated: "2026-07-19T08:41:50.175Z"
+status: milestone_complete
+stopped_at: Milestone complete (Phase 07 was final phase)
+last_updated: 2026-07-19T08:59:26.706Z
 last_activity: 2026-07-19 -- Phase 07 execution started
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
+  completed_plans: 3
   percent: 0
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-19)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** Phase 07 — helix-removal-and-two-column-layout
+**Current focus:** Milestone complete
 
 ## Current Position
 
-Phase: 07 (helix-removal-and-two-column-layout) — EXECUTING
-Plan: 1 of 3
-Status: Executing Phase 07
-Last activity: 2026-07-19 -- Phase 07 execution started
+Phase: 07
+Plan: Not started
+Status: Milestone complete
+Last activity: 2026-07-19
 
 ## Performance Metrics
 

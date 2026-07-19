@@ -28,7 +28,7 @@
 
 ### v1.2 Rimozione Helix
 
-- [ ] **Phase 7: Helix Removal and Two-Column Layout** - Remove Helix everywhere and reflow the bento grid to 2 columns with full-width GitHub card
+- [x] **Phase 7: Helix Removal and Two-Column Layout** - Remove Helix everywhere and reflow the bento grid to 2 columns with full-width GitHub card (completed 2026-07-19)
 
 ## Phase Details
 
@@ -54,7 +54,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 07-03-PLAN.md — Human-verify layout, language, and WCAG AA contrast
+- [x] 07-03-PLAN.md — Human-verify layout, language, and WCAG AA contrast
 
 **UI hint**: yes
 
@@ -68,4 +68,4 @@ Plans:
 | 4. Design Tokens and Container | v1.1 | 1/1 | Complete | 2026-02-19 |
 | 5. Bento Grid Layout | v1.1 | 1/1 | Complete | 2026-02-19 |
 | 6. Visual Polish and Extras | v1.1 | 1/1 | Complete | 2026-02-19 |
-| 7. Helix Removal and Two-Column Layout | v1.2 | 2/3 | In Progress|  |
+| 7. Helix Removal and Two-Column Layout | v1.2 | 3/3 | Complete   | 2026-07-19 |

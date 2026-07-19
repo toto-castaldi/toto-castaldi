@@ -2,13 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rimozione Helix
-status: planning
-last_updated: "2026-07-19T08:22:29.458Z"
-last_activity: 2026-07-19
+status: executing
+stopped_at: v1.2 roadmap created (Phase 7)
+last_updated: "2026-07-19T08:39:22.696Z"
+last_activity: 2026-07-19 -- Phase 7 planning complete
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
   percent: 0
 ---
@@ -26,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-07-19)
 
 Phase: Phase 7 — Helix Removal and Two-Column Layout
 Plan: —
-Status: Roadmap created, awaiting phase planning
-Last activity: 2026-07-19 — Roadmap for v1.2 created
+Status: Ready to execute
+Last activity: 2026-07-19 -- Phase 7 planning complete
 
 ## Performance Metrics
 

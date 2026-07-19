@@ -49,8 +49,8 @@
 Plans:
 **Wave 1**
 
-- [ ] 07-01-PLAN.md — Remove Helix from data, content descriptions, and repo docs
-- [ ] 07-02-PLAN.md — Reflow project grid to 2 columns on desktop (GitHub card full-width below)
+- [x] 07-01-PLAN.md — Remove Helix from data, content descriptions, and repo docs
+- [x] 07-02-PLAN.md — Reflow project grid to 2 columns on desktop (GitHub card full-width below)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -68,4 +68,4 @@ Plans:
 | 4. Design Tokens and Container | v1.1 | 1/1 | Complete | 2026-02-19 |
 | 5. Bento Grid Layout | v1.1 | 1/1 | Complete | 2026-02-19 |
 | 6. Visual Polish and Extras | v1.1 | 1/1 | Complete | 2026-02-19 |
-| 7. Helix Removal and Two-Column Layout | v1.2 | 0/3 | Planned | - |
+| 7. Helix Removal and Two-Column Layout | v1.2 | 2/3 | In Progress|  |

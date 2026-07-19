@@ -4,8 +4,8 @@ milestone: v1.2
 milestone_name: Rimozione Helix
 status: executing
 stopped_at: v1.2 roadmap created (Phase 7)
-last_updated: "2026-07-19T08:39:22.696Z"
-last_activity: 2026-07-19 -- Phase 7 planning complete
+last_updated: "2026-07-19T08:41:50.175Z"
+last_activity: 2026-07-19 -- Phase 07 execution started
 progress:
   total_phases: 1
   completed_phases: 0
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-19)
 
 **Core value:** Visitors can immediately see what projects exist and navigate to each one -- in their preferred language.
-**Current focus:** v1.2 Rimozione Helix — remove Helix and reflow bento grid to 2 columns
+**Current focus:** Phase 07 — helix-removal-and-two-column-layout
 
 ## Current Position
 
-Phase: Phase 7 — Helix Removal and Two-Column Layout
-Plan: —
-Status: Ready to execute
-Last activity: 2026-07-19 -- Phase 7 planning complete
+Phase: 07 (helix-removal-and-two-column-layout) — EXECUTING
+Plan: 1 of 3
+Status: Executing Phase 07
+Last activity: 2026-07-19 -- Phase 07 execution started
 
 ## Performance Metrics
 

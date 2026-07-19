@@ -32,16 +32,16 @@ Requirements for the Helix removal milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONT-07 | — | Pending |
-| CONT-08 | — | Pending |
-| LAYOUT-06 | — | Pending |
-| LAYOUT-07 | — | Pending |
-| LAYOUT-08 | — | Pending |
+| CONT-07 | Phase 7 | Pending |
+| CONT-08 | Phase 7 | Pending |
+| LAYOUT-06 | Phase 7 | Pending |
+| LAYOUT-07 | Phase 7 | Pending |
+| LAYOUT-08 | Phase 7 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 5 total
-- Mapped to phases: 0 (filled by roadmap)
-- Unmapped: 5
+- Mapped to phases: 5 (all mapped to Phase 7)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-19*

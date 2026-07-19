@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-07-19)
 Phase: Milestone v1.2 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-07-19 — Milestone v1.2 completed and archived
+Last activity: 2026-07-19 — Completed quick task 260719-flq: fix logo Lumio mancante in landing page
 
 ## Performance Metrics
 
@@ -57,6 +57,12 @@ None.
 ### Blockers/Concerns
 
 - helix.toto-castaldi.com subdomain redirect/teardown is out of scope for this repo (see REQUIREMENTS.md Out of Scope).
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260719-flq | Fix logo Lumio mancante in landing page (self-host logo.svg) | 2026-07-19 | 3b75f39 | [260719-flq-fix-logo-lumio-mancante-in-landing-page-](./quick/260719-flq-fix-logo-lumio-mancante-in-landing-page-/) |
 
 ## Session Continuity
 

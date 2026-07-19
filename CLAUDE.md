@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Multilingual (Italian/English) landing page for toto-castaldi.com showcasing three software projects: Docora, Lumio, and Helix. Built with Hugo, hosted on GitHub Pages.
+Multilingual (Italian/English) landing page for toto-castaldi.com showcasing two software projects: Docora and Lumio. Built with Hugo, hosted on GitHub Pages.
 
 ## Commands
 
@@ -28,7 +28,7 @@ hugo --minify
 Projects are defined as data/content entries, each with:
 - Name
 - Short description (in both IT and EN)
-- URL to subdomain (docora/lumio/helix.toto-castaldi.com)
+- URL to subdomain (docora/lumio.toto-castaldi.com)
 
 ## Planning
 

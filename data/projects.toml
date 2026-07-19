@@ -13,11 +13,3 @@ logo = "https://lumio.toto-castaldi.com/logo.svg"
 [project.description]
 it = "Studia in modo intelligente con flashcard generate dall'AI"
 en = "Study smarter with AI-powered flashcards"
-
-[[project]]
-name = "Helix"
-url = "https://helix.toto-castaldi.com"
-logo = "https://helix.toto-castaldi.com/logo.svg"
-[project.description]
-it = "L'AI al servizio del fitness Coach"
-en = "Coach fitness AI assistant"

@@ -9,7 +9,7 @@ en = "Headless GitHub repository monitoring with push-based file notifications"
 [[project]]
 name = "Lumio"
 url = "https://lumio.toto-castaldi.com"
-logo = "https://lumio.toto-castaldi.com/logo.svg"
+logo = "/images/lumio-logo.svg"
 [project.description]
 it = "Studia in modo intelligente con flashcard generate dall'AI"
 en = "Study smarter with AI-powered flashcards"

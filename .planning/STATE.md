@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rimozione Helix
-status: milestone_complete
-stopped_at: Milestone complete (Phase 07 was final phase)
-last_updated: 2026-07-19T08:59:26.706Z
-last_activity: 2026-07-19 -- Phase 07 execution started
+status: Awaiting next milestone
+stopped_at: v1.2 roadmap created (Phase 7)
+last_updated: "2026-07-19T09:02:17.299Z"
+last_activity: 2026-07-19 — Milestone v1.2 completed and archived
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
   completed_plans: 3
-  percent: 0
+  percent: 100
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-07-19)
 
 ## Current Position
 
-Phase: 07
-Plan: Not started
-Status: Milestone complete
-Last activity: 2026-07-19
+Phase: Milestone v1.2 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-19 — Milestone v1.2 completed and archived
 
 ## Performance Metrics
 
@@ -64,3 +64,7 @@ Last session: 2026-07-19
 Stopped at: v1.2 roadmap created (Phase 7)
 Resume file: None
 Next: /gsd:plan-phase 7
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

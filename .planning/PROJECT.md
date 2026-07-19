@@ -8,15 +8,11 @@ A minimal, multilingual (Italian/English) landing page that showcases Toto Casta
 
 Visitors can immediately see what projects exist and navigate to each one — in their preferred language.
 
-## Current Milestone: v1.2 Rimozione Helix
+## Current State
 
-**Goal:** Rimuovere il progetto Helix (non più esistente) dal sito e adattare il layout bento ai 2 progetti rimasti.
+**v1.2 Rimozione Helix — SHIPPED 2026-07-19.** Il sito mostra solo Docora e Lumio in una griglia bento a 2 colonne desktop, card GitHub a tutta larghezza sotto, 1 colonna mobile, WCAG AA in entrambi i temi. Zero riferimenti a Helix.
 
-**Target features:**
-- Rimozione card Helix (dati + contenuti IT/EN)
-- Griglia progetti a 2 colonne desktop (Docora, Lumio)
-- Card GitHub profile a tutta larghezza sotto i progetti
-- Responsive invariato: 1 colonna mobile, WCAG AA mantenuto
+**Next Milestone Goals:** da definire con `/gsd:new-milestone`.
 
 ## Requirements
 
@@ -24,7 +20,7 @@ Visitors can immediately see what projects exist and navigate to each one — in
 
 - ✓ Multilingual landing page (IT/EN) generated with Hugo — v1.0
 - ✓ Each project displayed with name, short description, and link — v1.0
-- ✓ Three projects: Docora, Lumio, Helix with their subdomain URLs — v1.0
+- ✓ Three projects: Docora, Lumio, Helix with their subdomain URLs — v1.0 (Helix rimosso in v1.2)
 - ✓ Minimal clean design with strong typography — v1.0
 - ✓ Hosted on GitHub Pages with custom domain (toto-castaldi.com + www) — v1.0
 - ✓ Language switcher between Italian and English — v1.0
@@ -107,4 +103,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-19 — Phase 7 complete: Helix removed, 2-column grid shipped*
+*Last updated: 2026-07-19 after v1.2 milestone*

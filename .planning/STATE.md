@@ -1,3 +1,18 @@
+---
+gsd_state_version: 1.0
+milestone: v1.2
+milestone_name: Rimozione Helix
+status: planning
+last_updated: "2026-07-19T08:22:29.458Z"
+last_activity: 2026-07-19
+progress:
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
+---
+
 # Project State
 
 ## Project Reference
@@ -9,17 +24,20 @@ See: .planning/PROJECT.md (updated 2026-02-19)
 
 ## Current Position
 
-Phase: All complete (6 phases across v1.0 + v1.1)
-Status: v1.1 milestone shipped and archived
-Last activity: 2026-02-19 -- Completed v1.1 Restyling Bento Grid milestone
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-07-19 — Milestone v1.2 started
 
 ## Performance Metrics
 
 **v1.0 Totals:**
+
 - Phases: 3 | Plans: 6 | Files: 52 | LOC: 501
 - Timeline: 2 days (2026-02-17 -> 2026-02-18)
 
 **v1.1 Totals:**
+
 - Phases: 3 | Plans: 3 | Tasks: 6
 - Files changed: 21 (+2248/-89) | LOC: 489
 - Timeline: 2026-02-17 -> 2026-02-19

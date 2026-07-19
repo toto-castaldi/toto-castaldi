@@ -8,6 +8,16 @@ A minimal, multilingual (Italian/English) landing page that showcases Toto Casta
 
 Visitors can immediately see what projects exist and navigate to each one — in their preferred language.
 
+## Current Milestone: v1.2 Rimozione Helix
+
+**Goal:** Rimuovere il progetto Helix (non più esistente) dal sito e adattare il layout bento ai 2 progetti rimasti.
+
+**Target features:**
+- Rimozione card Helix (dati + contenuti IT/EN)
+- Griglia progetti a 2 colonne desktop (Docora, Lumio)
+- Card GitHub profile a tutta larghezza sotto i progetti
+- Responsive invariato: 1 colonna mobile, WCAG AA mantenuto
+
 ## Requirements
 
 ### Validated
@@ -26,7 +36,8 @@ Visitors can immediately see what projects exist and navigate to each one — in
 
 ### Active
 
-(None — planning next milestone)
+- [ ] Helix rimosso dal sito (dati, contenuti IT/EN, card)
+- [ ] Griglia progetti a 2 colonne desktop con GitHub profile a tutta larghezza sotto
 
 ### Out of Scope
 
@@ -76,5 +87,22 @@ WCAG AA contrast verified in both light and dark themes.
 | Reusable .bento-cell class | Separate from .project-card, extensible for future sections | ✓ Good |
 | prefers-reduced-motion guard for hover | Accessible animations, CSS-only approach | ✓ Good |
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-02-19 after v1.1 milestone completion*
+*Last updated: 2026-07-19 — started milestone v1.2 Rimozione Helix*
